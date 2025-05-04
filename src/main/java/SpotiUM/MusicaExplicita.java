@@ -1,3 +1,5 @@
+package SpotiUM;
+
 public class MusicaExplicita extends Musica{
 
     public MusicaExplicita(String nome, String interprete, String editora, String letra, String musica, String genero, int duracao) {

@@ -1,4 +1,8 @@
-public abstract class PlanoSubscricao {
+package SpotiUM;
+
+import java.io.Serializable;
+
+public abstract class PlanoSubscricao implements Serializable {
 
     private String nome;
 

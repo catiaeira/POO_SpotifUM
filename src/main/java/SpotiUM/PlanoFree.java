@@ -1,3 +1,5 @@
+package SpotiUM;
+
 public class PlanoFree extends PlanoSubscricao {
 
     public PlanoFree() {

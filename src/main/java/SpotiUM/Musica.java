@@ -1,4 +1,7 @@
-public class Musica {
+package SpotiUM;
+
+import java.io.Serializable;
+public class Musica implements Serializable {
 
     private String nome;
     private String interprete;

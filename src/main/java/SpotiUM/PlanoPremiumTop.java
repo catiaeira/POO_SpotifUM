@@ -1,12 +1,14 @@
-public class PlanoPremiumBase extends PlanoSubscricao {
+package SpotiUM;
 
-    public PlanoPremiumBase() {
-        super("Premium Base");
+public class PlanoPremiumTop extends PlanoSubscricao {
+
+    public PlanoPremiumTop() {
+        super("Premium Top");
     }
 
     @Override
     public int calcularPontos(Utilizador utilizador) {
-        return 10; //este plano dá 10 pontos quando se ouve uma musica
+        return (int) (utilizador.getPontos() * 0.025); //os pontos dados por este plano são 2.5% dos pontos atuais
     }
 
     @Override
