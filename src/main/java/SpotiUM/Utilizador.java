@@ -1,4 +1,8 @@
-public class Utilizador {
+package SpotiUM;
+
+import java.io.Serializable;
+
+public class Utilizador implements Serializable {
 
     private String nome;
     private String email;
