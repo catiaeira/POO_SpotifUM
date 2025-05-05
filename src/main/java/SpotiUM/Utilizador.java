@@ -10,6 +10,14 @@ public class Utilizador implements Serializable {
     private PlanoSubscricao planoSubscricao;
     private int pontos;
 
+    public Utilizador (Utilizador user) {
+        this.nome = user.getNome();
+        this.email = user.getEmail();
+        this.morada = user.getMorada();
+        this.planoSubscricao = user.getPlanoSubscricao();
+        this.pontos = user.getPontos();
+    }
+
     public Utilizador(String nome, String email, String morada, PlanoSubscricao planoSubscricao){
         this.nome = nome;
         this.email = email;

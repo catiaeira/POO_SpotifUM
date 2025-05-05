@@ -3,3 +3,5 @@ build/
 .idea/
 *.class
 /dados.dat
+/utilizadores.dat
+/albuns.dat

@@ -1,8 +1,11 @@
 package SpotiUM.interaction;
+import SpotiUM.Album;
 import SpotiUM.Musica;
 import SpotiUM.Utilizador;
+import SpotiUM.Utils;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,37 +14,47 @@ Esta classe vai "segurar" os dados do programa, como os users, álbuns e playlis
 Métodos de remover ou adicionar componentes pertencem aqui.
  */
 public class SpotModel implements Serializable {
-    private Map<Integer, Musica> musicas; // álbuns na vdd, mudar dps
+    private Map<Integer, Album> albuns;
     private Map<Integer, Utilizador> utilizadores;
 
-    private Integer musicaProximoID;
+    private Integer albumProximoID;
     private Integer utilizadorProximoID;
 
     public SpotModel() {
-        this.musicas = new HashMap<>();
+        this.albuns = new HashMap<>();
         this.utilizadores = new HashMap<>();
-        musicaProximoID = 1;
+        albumProximoID = 1;
         utilizadorProximoID = 1;
     }
 
+    public Map <Integer, Utilizador> getUtilizadores () { return new HashMap<> (this.utilizadores);}
+    public Map <Integer, Album> getAlbuns()             { return new HashMap<>(this.albuns);}
+
+    public void setAlbuns (Map<Integer, Album> albuns) {
+        this.albuns = new HashMap<>(albuns);
+        this.albumProximoID = albuns.size() + 1;
+    }
+    public void setUtilizadores (Map < Integer, Utilizador> utilizadores) {
+        this.utilizadores = new HashMap<>(utilizadores);
+        this.utilizadorProximoID = utilizadores.size() + 1;
+    }
+
     public int adicionarUtilizador (Utilizador user) {
-        this.utilizadores.put(utilizadorProximoID, user);
+        this.utilizadores.put(utilizadorProximoID, new Utilizador(user));
         return utilizadorProximoID++;
     }
 
     public Utilizador getUtilizador (int id) {
         return this.utilizadores.get(id);
     }
+    public Album getAlbum (int id) {return this.albuns.get(id);}
 
-    public void guardarEstado(String ficheiro) throws IOException {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ficheiro))) {
-            oos.writeObject(this);
-        }
+    public int adicionaAlbum(Album album) {
+        this.albuns.put(albumProximoID, album.clone());
+        return albumProximoID++;
     }
 
-    public static SpotModel carregarEstado(String ficheiro) throws IOException, ClassNotFoundException {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ficheiro))) {
-            return (SpotModel) ois.readObject();
-        }
+    public void adicionaMusica (Musica musica, int id) {
+        this.albuns.get(id).adicionarMusica(musica.clone());
     }
 }

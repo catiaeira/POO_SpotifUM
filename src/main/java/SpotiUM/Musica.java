@@ -23,6 +23,17 @@ public class Musica implements Serializable {
         this.nReproducoes = 0;
     }
 
+    public Musica(Musica m) {
+        this.nome = m.getNome();
+        this.interprete = m.getInterprete();
+        this.editora = m.getEditora();
+        this.letra = m.getLetra();
+        this.musica = m.getMusica();
+        this.genero = m.genero;
+        this.duracao = m.getDuracao();
+        this.nReproducoes = m.getnReproducoes();
+    }
+
     public void reproduzir() {
         nReproducoes++;
         System.out.println(letra);
@@ -91,6 +102,11 @@ public class Musica implements Serializable {
 
     public void setnReproducoes(int nReproducoes){
         this.nReproducoes = nReproducoes;
+    }
+
+    @Override
+    public Musica clone () {
+        return new Musica(this);
     }
 
     public String musicaToString() {
