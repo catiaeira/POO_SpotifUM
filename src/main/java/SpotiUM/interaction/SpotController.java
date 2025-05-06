@@ -4,6 +4,7 @@ import SpotiUM.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -11,7 +12,7 @@ Esta classe vai ser a responsável por chamar os métodos dos componentes do pro
 (ex. gets, SpotiUM.Musica m = new SpotiUM.Musica()). Serve como ponte entre o Model e o Interact.
  */
 public class SpotController {
-    SpotModel modelo;
+    private SpotModel modelo;
 
     public SpotController(SpotModel modelo) {
         this.modelo = modelo;
@@ -21,16 +22,11 @@ public class SpotController {
         this.modelo = modelo;
     }
 
-    public boolean utilizadorExiste (int id) {
+    public boolean utilizadorExiste (String id) {
         return this.modelo.getUtilizador(id) != null;
     }
-    public String getUtilizadorNome (int id) {
-        Utilizador user = this.modelo.getUtilizador(id);
-        if (user == null) return "";
-        return user.getNome();
-    }
 
-    public int novoUser (String nome, String morada, String email, int planoI) {
+    public void novoUser (String nome, String morada, String email, int planoI) {
         PlanoSubscricao plano = switch (planoI) {
             case 1 -> new PlanoFree();
             case 2 -> new PlanoPremiumBase();
@@ -38,16 +34,21 @@ public class SpotController {
             default -> throw new IllegalStateException("Valor inesperado: " + planoI);
         };
         Utilizador utilizador = new Utilizador(nome, email, morada, plano, 0);
-        return this.modelo.adicionarUtilizador(utilizador);
+        this.modelo.adicionarUtilizador(utilizador);
     }
 
-    public void userOuveMusica(int id) {
-        System.out.println("tocar musica");
-        // lookup musica pelo nome, se houver várias dá print e pede para especificar qual?
+    public boolean userOuveMusica(String user, String musicaNome, Album album) {
+        Utilizador utilizador = this.modelo.getUtilizador(user);
+
+        List<Musica> musicas = album.getMusicaPeloNome(musicaNome);
+        if (musicas == null || musicas.isEmpty()) return false;
+        Musica musica = musicas.size() == 1 ? musicas.getFirst() : SpotInteract.escolheDeUmaLista(musicas);
+        utilizador.ouvirMusica(musica);
+        return true;
     }
 
-    public void userCriaPlaylist (int id) {
-        Utilizador u = this.modelo.getUtilizador(id);
+    public void userCriaPlaylist (String user) {
+        Utilizador u = this.modelo.getUtilizador(user);
         if (u.getPlanoSubscricao().podeCriarPlaylist()) {
             System.out.println("A criar playlist");
         }
@@ -61,16 +62,32 @@ public class SpotController {
         return this.modelo.adicionaAlbum(album);
     }
 
-    public boolean verificaAlbum (int id) {return this.modelo.getAlbum(id) != null;}
+    public boolean existeAlbum(String nome) {return this.modelo.getAlbum(nome) != null;}
 
-    public void adicionaMusica(Musica m, int albumId) { this.modelo.adicionaMusica(m, albumId);}
+    public void adicionaMusica(Musica m, String album) {
+        List <Album> albuns = this.modelo.getAlbum(album);
+        Album albumm = albuns.size() == 1 ? albuns.getFirst() : SpotInteract.escolheDeUmaLista(albuns);
+        this.modelo.adicionaMusica(m, albumm);
+    }
 
+    public void adicionaMusica(Musica m, Album a) {
+        if (m == null || a == null) throw new IllegalArgumentException("Música ou álbum inválidos.");
+        this.modelo.adicionaMusica(m, a);
+    }
+
+    public List<Album> getAlbuns (String nome) {
+        List<Album> albuns = this.modelo.getAlbum(nome);
+        if (albuns == null || albuns.isEmpty()) {
+            return null;
+        }
+        return albuns;
+    }
     // Persistência
 
     public boolean guardarEstado(String tipo, String ficheiro) {
         Object objetoAGuardar = switch (tipo) {
             case "utilizadores" -> this.modelo.getUtilizadores();
-            case "albuns"       -> this.modelo.getAlbuns();
+            case "albuns"       -> this.modelo.getAlbunsPorID();
             case "total"        -> this.modelo;
             default             -> throw new IllegalArgumentException("Tipo desconhecido: " + tipo);
         };
@@ -100,8 +117,8 @@ public class SpotController {
         }
 
         switch  (tipo) {
-            case "utilizadores" -> this.modelo.setUtilizadores((Map<Integer, Utilizador>) obj);
-            case "albuns" -> this.modelo.setAlbuns((Map<Integer, Album>) obj);
+            case "utilizadores" -> this.modelo.setUtilizadores((Map<String, Utilizador>) obj);
+            case "albuns" -> this.modelo.setAlbunsPorID((Map<Integer, Album>) obj);
             case "total" -> this.setModelo((SpotModel) obj);
         }
         return true;
