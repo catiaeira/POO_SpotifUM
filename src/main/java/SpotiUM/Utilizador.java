@@ -3,7 +3,7 @@ package SpotiUM;
 import java.io.Serializable;
 
 public class Utilizador implements Serializable {
-    private String nome;
+    private String nome; // a assumir que é username (único)
     private String email;
     private String morada;
     private PlanoSubscricao planoSubscricao;

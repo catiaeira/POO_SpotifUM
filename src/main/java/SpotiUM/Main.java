@@ -6,8 +6,8 @@ import SpotiUM.interaction.SpotModel;
 
 /*
 TODO:
-- Playlists e álbuns;
 - Reprodução de músicas do utilizador (dependente do plano)
+- Listar entidades (musicas, albuns, utilizadores)
 - "Análise dos hábitos de reprodução" para os users premium (artistas e músicas), listas de músicas automáticas baseado nessa análise
     Involve guardar o histórico de músicas do utilizador
 - Interação com playlists e álbuns
