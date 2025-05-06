@@ -3,6 +3,8 @@ package SpotiUM.interaction;
 import SpotiUM.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 
 /*
 Esta classe vai ser a responsável por chamar os métodos dos componentes do programa
@@ -54,9 +56,55 @@ public class SpotController {
         }
     }
 
-    public void guardarEstado(String ficheiro) throws IOException {
-        this.modelo.guardarEstado(ficheiro);
+    public int adicionaAlbum(String nome, String artista, ArrayList<Musica> musicas) {
+        Album album = new Album(nome, artista, new ArrayList<>(musicas));
+        return this.modelo.adicionaAlbum(album);
     }
 
+    public boolean verificaAlbum (int id) {return this.modelo.getAlbum(id) != null;}
+
+    public void adicionaMusica(Musica m, int albumId) { this.modelo.adicionaMusica(m, albumId);}
+
+    // Persistência
+
+    public boolean guardarEstado(String tipo, String ficheiro) {
+        Object objetoAGuardar = switch (tipo) {
+            case "utilizadores" -> this.modelo.getUtilizadores();
+            case "albuns"       -> this.modelo.getAlbuns();
+            case "total"        -> this.modelo;
+            default             -> throw new IllegalArgumentException("Tipo desconhecido: " + tipo);
+        };
+
+        try {
+            return Utils.guardarObjeto(objetoAGuardar, ficheiro);
+        } catch (IOException e) {
+            System.out.println("Erro ao guardar [" + tipo + "]: " + e.getMessage());
+            return false;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean carregarEstado(String tipo, String ficheiro) {
+        Class<?> classe = switch (tipo) {
+            case "utilizadores", "albuns"   -> Map.class;
+            case "total"                    -> SpotModel.class;
+            default                         -> throw new IllegalArgumentException("Tipo desconhecido: " + tipo);
+        };
+        Object obj;
+        try {
+            obj = Utils.carregarEstado(classe, ficheiro);
+            if (obj == null) return false;
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Erro ao carregar estado: " + e.getMessage());
+            return false;
+        }
+
+        switch  (tipo) {
+            case "utilizadores" -> this.modelo.setUtilizadores((Map<Integer, Utilizador>) obj);
+            case "albuns" -> this.modelo.setAlbuns((Map<Integer, Album>) obj);
+            case "total" -> this.setModelo((SpotModel) obj);
+        }
+        return true;
+    }
 
 }

@@ -38,6 +38,7 @@ public class Musica implements Serializable {
         this.interprete = m.getInterprete();
         this.editora = m.getEditora();
         this.letra = m.getLetra();
+
         this.genero = m.getGenero();
         this.musica = m.getMusica();
         this.duracaoSegs = m.getDuracao();
