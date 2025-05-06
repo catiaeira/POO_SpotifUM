@@ -37,7 +37,7 @@ public class SpotController {
             case 3 -> new PlanoPremiumTop();
             default -> throw new IllegalStateException("Valor inesperado: " + planoI);
         };
-        Utilizador utilizador = new Utilizador(nome, email, morada, plano);
+        Utilizador utilizador = new Utilizador(nome, email, morada, plano, 0);
         return this.modelo.adicionarUtilizador(utilizador);
     }
 

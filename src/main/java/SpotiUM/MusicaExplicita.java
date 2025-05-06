@@ -2,8 +2,16 @@ package SpotiUM;
 
 public class MusicaExplicita extends Musica{
 
-    public MusicaExplicita(String nome, String interprete, String editora, String letra, String musica, String genero, int duracao) {
-        super(nome, interprete, editora, letra, musica, genero, duracao);
+    public MusicaExplicita(){
+        super();
+    }
+
+    public MusicaExplicita(String nome, String interprete, String editora, String letra, String genero, String musica, int duracaoSegs, int nReproducoes) {
+        super(nome, interprete, editora, letra, musica, genero, duracaoSegs, nReproducoes);
+    }
+
+    public MusicaExplicita(MusicaExplicita m){
+        super(m);
     }
 
     @Override
@@ -12,8 +20,12 @@ public class MusicaExplicita extends Musica{
     }
 
     @Override
-    public String musicaToString() {
-        return super.musicaToString() + "\n⚠️ Tipo: Música Explícita";
+    public String toString() {
+        return super.toString() + "\n⚠️ Tipo: Música Explícita";
     }
 
+    @Override
+    public MusicaExplicita clone() {
+        return new MusicaExplicita(this);
+    }
 }
