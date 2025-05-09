@@ -101,7 +101,7 @@ public class SpotInteract {
         String genero = input.lerString("Género: ");
         int duracao = input.lerInt("Duração (segundos): ", "Deve ser maior que 0", i -> i>0);
 
-        return new Musica(nome, artista, editora, letra, genero, musica, duracao);
+        return new Musica(nome, artista, editora, letra, genero, musica, duracao, 0);
     }
 
     public void novoAlbum () {
