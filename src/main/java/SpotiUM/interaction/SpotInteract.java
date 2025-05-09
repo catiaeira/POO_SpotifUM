@@ -2,15 +2,12 @@ package SpotiUM.interaction;
 
 import SpotiUM.Album;
 import SpotiUM.Musica;
-import SpotiUM.Utilizador;
-import SpotiUM.Utils;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
 public class SpotInteract {
-    SpotController controlador;
+    private SpotController controlador;
 
     public SpotInteract(SpotController controlador) {
         this.controlador = controlador;
@@ -33,9 +30,65 @@ public class SpotInteract {
         mainMenu.run(); // Corre o menu principal
     }
 
+    public Album obterAlbumValidoDoUserInput () {
+        UserInput input = new UserInput();
+        String nomeAlbum = input.lerString("Nome do álbum: ");
+        List<Album> albuns = controlador.getAlbuns(nomeAlbum);
+
+        if (albuns == null || albuns.isEmpty()) return null;
+
+        return albuns.size() == 1 ? albuns.getFirst() : escolheDeUmaLista(albuns);
+    }
+
+    public void adicionaMusica() {
+        UserInput input = new UserInput();
+        Album album = obterAlbumValidoDoUserInput();
+        if (album == null) {
+            System.out.println("Álbum não existe.");
+            return;
+        }
+        Musica m = novaMusica();
+
+        try {
+            controlador.adicionaMusica(m, album);
+            System.out.println("Música adicionada.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
+    public void utilizadorOuveMusica (String user) {
+        UserInput input = new UserInput();
+        Album album = obterAlbumValidoDoUserInput();
+        if (album == null) {
+            System.out.println("Álbum não existe.");
+            return;
+        }
+        String musicaNome = input.lerString("Nome da música: ");
+
+        if (!this.controlador.userOuveMusica(user, musicaNome, album)) System.out.println("Música não existe");
+    }
+
+    public static <T> T escolheDeUmaLista(List<T> obj) {
+        System.out.println("Qual pretendes?");
+        for (int i = 0; i< obj.size(); i++) {
+            System.out.println("-----");
+            System.out.println(i+1 + ".");
+            System.out.println(obj.get(i).toString());
+            System.out.println("-----");
+        }
+        UserInput input = new UserInput();
+        int index = input.lerInt("Insira o número correspondente: ",
+                                    "Insira um número válido",
+                                   i -> i>0 && i < obj.size()+1);
+        return obj.get(index-1);
+    }
+
+    // nova entidade
+
     public void novoUtilizador () {
         UserInput input = new UserInput();
-        String nome = input.lerString("Nome: ");
+        String nome = input.lerString("Nome: ", "Username já existente", u -> !this.controlador.utilizadorExiste(u));
         String email = input.lerString("Email: ","Email inválido", e -> e.matches(".+@.+\\..+"));
         String morada = input.lerString("Morada: ");
         int plano = input.lerInt("""
@@ -44,51 +97,8 @@ public class SpotInteract {
                                     - 2. Plano Premium
                                     - 3. Plano TOP Premium
                                     """, "Insira um número entre 1 e 3" ,i -> (i>0 && i<4));
-        int id = this.controlador.novoUser(nome,email,morada,plano);
-        System.out.println("Utilizador adicionado: " + id);
-    }
-
-
-    public void menuUtilizador() {
-        UserInput input = new UserInput();
-        int id = input.lerInt("Id do utilizador: ", "O número tem de ser positivo", i -> i>=0);
-        if (!this.controlador.utilizadorExiste(id)) {
-            System.out.println("Utilizador " + id + " não existe");
-            return;
-        }
-        NewMenu menu = new NewMenu(new String[]{
-                "Ouvir música",
-                "Criar playlist"
-        }, "Utilizador " + this.controlador.getUtilizadorNome(id));
-
-        menu.setHandler(1, () -> this.controlador.userOuveMusica(id));
-        menu.setHandler(2, () ->this.controlador.userCriaPlaylist(id));
-
-        menu.run();
-    }
-
-    public void menuAdmin() {
-        NewMenu menu = new NewMenu(new String[]{
-                "Adicionar música",
-                "Novo album",
-                "Importar dados",
-                "Exportar dados"
-        }, "Admin");
-
-        menu.setHandler(1, this::adicionaMusica);
-        menu.setHandler(2, this::novoAlbum);
-        menu.setHandler(3, this::carregarEstado);
-        menu.setHandler(4, this::guardarEstado);
-        menu.run();
-    }
-
-    public void adicionaMusica() {
-        UserInput input = new UserInput();
-        int albumId = input.lerInt("Id do Álbum da música: ", "Álbum não existe", i -> controlador.verificaAlbum(i)); // fica preso caso nenhum album exista
-        Musica m = novaMusica();
-
-        this.controlador.adicionaMusica(m, albumId);
-        System.out.println("Música adicionada com sucesso.");
+        this.controlador.novoUser(nome,email,morada,plano);
+        System.out.println("Utilizador adicionado!");
     }
 
     public Musica novaMusica () {
@@ -116,6 +126,41 @@ public class SpotInteract {
 
         int id = this.controlador.adicionaAlbum (nome, artista, musicas);
         System.out.println("Álbum adicionado: " + id);
+    }
+
+    // menus
+
+    public void menuUtilizador() {
+        UserInput input = new UserInput();
+        String user = input.lerString("Nome do utilizador: ");
+        if (!this.controlador.utilizadorExiste(user)) {
+            System.out.println("Utilizador " + user + " não existe");
+            return;
+        }
+        NewMenu menu = new NewMenu(new String[]{
+                "Ouvir música",
+                "Criar playlist"
+        }, "Utilizador " + user);
+
+        menu.setHandler(1, () -> utilizadorOuveMusica(user));
+        menu.setHandler(2, () ->this.controlador.userCriaPlaylist(user));
+
+        menu.run();
+    }
+
+    public void menuAdmin() {
+        NewMenu menu = new NewMenu(new String[]{
+                "Adicionar música",
+                "Novo album",
+                "Importar dados",
+                "Exportar dados"
+        }, "Admin");
+
+        menu.setHandler(1, this::adicionaMusica);
+        menu.setHandler(2, this::novoAlbum);
+        menu.setHandler(3, this::carregarEstado);
+        menu.setHandler(4, this::guardarEstado);
+        menu.run();
     }
 
 // Persistência

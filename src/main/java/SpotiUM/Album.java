@@ -2,11 +2,13 @@ package SpotiUM;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Album implements Serializable {
-    String nome;
-    String artista; // necessário?
-    ArrayList<Musica> musicas;
+    private String nome;
+    private String artista;
+    private ArrayList<Musica> musicas;
 
     public Album(String nome, String artista, ArrayList<Musica> musicas) {
         this.nome = nome;
@@ -26,7 +28,14 @@ public class Album implements Serializable {
     public void setArtista(String artista) {this.artista = artista;}
 
     public ArrayList<Musica> getMusicas() {return new ArrayList<>(musicas);}
+
     public void setMusicas(ArrayList<Musica> musicas) {this.musicas = new ArrayList<>(musicas);}
+
+    public List<Musica> getMusicaPeloNome(String nome) {
+        return this.musicas.stream()
+                .filter(m-> m.getNome().equalsIgnoreCase(nome))
+                .toList();
+    }
 
     @Override
     public Album clone () {
