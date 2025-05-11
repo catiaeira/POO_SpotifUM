@@ -1,8 +1,6 @@
 package SpotiUM;
 
-import SpotiUM.interaction.SpotController;
-import SpotiUM.interaction.SpotInteract;
-import SpotiUM.interaction.SpotModel;
+import SpotiUM.MVC.SpotController;
 
 /*
 TODO:
@@ -21,10 +19,8 @@ public class Main {
 
         //utilizador1.ouvirMusica(musica1);
 
-        SpotModel modelo = new SpotModel();
-        SpotController controlador = new SpotController(modelo);
-        SpotInteract interact = new SpotInteract(controlador);
-        interact.run();
+        SpotController controller = new SpotController();
+        controller.run();
 
         // musica1.reproduzir();
         //System.out.println(musica1.musicaToString());

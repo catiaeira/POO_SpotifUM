@@ -1,7 +1,6 @@
 package SpotiUM;
 
-import SpotiUM.interaction.SpotModel;
-import SpotiUM.interaction.UserInput;
+import SpotiUM.MVC.UserInput;
 
 import java.io.*;
 

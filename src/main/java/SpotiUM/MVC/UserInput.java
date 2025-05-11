@@ -1,4 +1,4 @@
-package SpotiUM.interaction;
+package SpotiUM.MVC;
 import java.util.Scanner;
 import java.util.function.Function;
 import java.util.function.Predicate;

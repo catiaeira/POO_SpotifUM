@@ -120,6 +120,5 @@ public class Musica implements Serializable {
 
     public void reproduzir() {
         nReproducoes++;
-        System.out.println(letra);
     }
 }
