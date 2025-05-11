@@ -31,7 +31,7 @@ public class Album implements Serializable {
 
     public void setMusicas(ArrayList<Musica> musicas) {this.musicas = new ArrayList<>(musicas);}
 
-    public List<Musica> getMusicaPeloNome(String nome) {
+    public List<Musica> getMusicasPeloNome(String nome) {
         return this.musicas.stream()
                 .filter(m-> m.getNome().equalsIgnoreCase(nome))
                 .toList();

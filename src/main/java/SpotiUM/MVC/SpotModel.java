@@ -1,13 +1,8 @@
-package SpotiUM.interaction;
-import SpotiUM.Album;
-import SpotiUM.Musica;
-import SpotiUM.Utilizador;
+package SpotiUM.MVC;
+import SpotiUM.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /*
 Esta classe vai "segurar" os dados do programa, como os users, álbuns e playlists, etc. 
@@ -15,8 +10,8 @@ Métodos de remover ou adicionar componentes pertencem aqui.
  */
 public class SpotModel implements Serializable {
     private Map<Integer, Album> albunsPorID;
-    private Map<String, Utilizador> utilizadores;
-    private Map<String, List<Album>> albunsPorTitulo = new HashMap<>();
+    private Map<String, Utilizador> utilizadores; // key string é sempre em lowercase
+    private Map<String, List<Album>> albunsPorTitulo = new HashMap<>(); // key string é sempre em lowercase
 
     private Integer albumProximoID;
 
@@ -43,29 +38,46 @@ public class SpotModel implements Serializable {
         this.utilizadores = new HashMap<>(utilizadores);
     }
 
-    public void adicionarUtilizador (Utilizador user) {
-        if (utilizadores.get(user.getNome()) != null) return;
+    public void adicionarUtilizador (Utilizador user)  {
+        if (utilizadorExiste(user.getNome())) return;
         Utilizador utilizador = user.clone();
-        this.utilizadores.put(utilizador.getNome(), utilizador);
+        this.utilizadores.put(utilizador.getNome().toLowerCase(), utilizador);
     }
-    public int adicionaAlbum(Album album) {
+    public void adicionaAlbum(Album album) {
         Album albumCopia = album.clone();
-        this.albunsPorID.put(albumProximoID, albumCopia);
+        this.albunsPorID.put(albumProximoID++, albumCopia);
         this.albunsPorTitulo.computeIfAbsent(albumCopia.getNome().toLowerCase(), t-> new ArrayList<>()).add(albumCopia);
-        return albumProximoID++;
     }
 
-    public Utilizador getUtilizador (String nome) {
-        return this.utilizadores.get(nome);
+    public Utilizador getUtilizador (String nome) throws UtilizadorException {
+        Utilizador user = this.utilizadores.get(nome.toLowerCase());
+        if (user == null) throw new UtilizadorException("Utilizador " + nome + " não existe");
+        return user;
+    }
+
+    public boolean utilizadorExiste(String nome) {
+        return this.utilizadores.containsKey(nome.toLowerCase());
     }
 
     public Album getAlbum (int id) {return this.albunsPorID.get(id);}
 
-    public List <Album> getAlbum (String nome) {
-        return this.albunsPorTitulo.get(nome.toLowerCase());
+    public List <Album> getAlbum (String nome) throws AlbumException {
+        List <Album> album = this.albunsPorTitulo.get(nome.toLowerCase());
+        if (album.isEmpty()) throw new AlbumException("Não existe nenhum álbum com esse nome");
+        return album;
     }
 
     public void adicionaMusica (Musica musica, Album album) {
         album.adicionarMusica(musica.clone());
     }
+
+    public List<Musica> getMusicasPeloNome(String nome) throws MusicaException {
+        List<Musica> musicas = this.albunsPorID.values().stream()
+                .flatMap(album -> album.getMusicasPeloNome(nome).stream())
+                .toList();
+
+        if (musicas.isEmpty()) throw new MusicaException("Não existe nenhuma música com esse nome");
+        return musicas;
+    }
+
 }
