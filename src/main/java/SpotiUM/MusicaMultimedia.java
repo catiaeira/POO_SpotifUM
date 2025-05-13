@@ -1,18 +1,30 @@
 package SpotiUM;
 
-public class MusicaMultimedia extends Musica{
+public class MusicaMultimedia extends Musica implements IMusicaMultimedia {
+    private String videoLink;
 
     public MusicaMultimedia(){
         super();
+        this.videoLink = "";
     }
 
-    public MusicaMultimedia(String nome, String interprete, String editora, String letra, String genero, String musica, int duracaoSegs, int nReproducoes) {
+    public MusicaMultimedia(String nome, String interprete, String editora, String letra, String genero, String musica, int duracaoSegs, int nReproducoes, String link) {
         super(nome, interprete, editora, letra, musica, genero, duracaoSegs, nReproducoes);
+        this.videoLink = link;
     }
 
     public MusicaMultimedia(MusicaMultimedia m){
         super(m);
+        this.videoLink = getVideoLink();
     }
+
+    public String getVideoLink(){
+        return videoLink;
+    }
+    public void setVideoLink(String link){
+        this.videoLink = link;
+    }
+
 
     @Override
     public boolean isMultimedia() {

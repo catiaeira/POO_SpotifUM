@@ -1,6 +1,6 @@
 package SpotiUM;
 
-public class MusicaExplicita extends Musica{
+public class MusicaExplicita extends Musica implements IMusicaExplicita {
 
     public MusicaExplicita(){
         super();

@@ -1,6 +1,11 @@
 package SpotiUM;
 
+import SpotiUM.MVC.SpotView;
+
 import java.io.Serializable;
+
+import static SpotiUM.MVC.SpotView.Mensagem.TOCAR_MUSICA;
+
 public class Musica implements Serializable {
     private String nome;
     private String interprete;
@@ -110,15 +115,28 @@ public class Musica implements Serializable {
         return new Musica(this);
     }
 
-    public boolean isExplicita() {
-        return false;
-    }
-
-    public boolean isMultimedia() {
-        return false;
-    }
-
-    public void reproduzir() {
+    public void reproduzir() throws InterruptedException {
         nReproducoes++;
+        String letra = this.getLetra();
+        if (letra.isEmpty()) {
+            this. SpotView.Mensagem.TOCAR_MUSICA, false;
+        }
+
+        int durSegundos = this.getDuracao();
+        String[] linhas = letra.split("\n");
+
+        int atraso = durSegundos * 1000 / linhas.length; // atraso em ms para o Thread.sleep()
+
+        for (String l : linhas) {
+            try {
+                Thread.sleep(atraso);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Restore interrupt flag
+                System.out.println("Playback stopped.");
+                return; // Exit early
+            }
+            System.out.println(l);
+        }
     }
+
 }
