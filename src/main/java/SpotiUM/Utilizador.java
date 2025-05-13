@@ -42,7 +42,11 @@ public class Utilizador implements Serializable {
     }
 
     public void ouvirMusica(Musica musica){
-        musica.reproduzir();
+        try {
+            musica.reproduzir();
+        } catch (Exception e) {
+            System.err.println("Failed to play song: " + e.getMessage()); // can I??
+        }
         int pontosGanhos = planoSubscricao.calcularPontos(this);
         this.pontos += pontosGanhos;
         // System.out.println(nome + " ouviu \"" + musica.getNome() + "\" e ganhou " + pontosGanhos + " pontos. Total: " + pontos);
