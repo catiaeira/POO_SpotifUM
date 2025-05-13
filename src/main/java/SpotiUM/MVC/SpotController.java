@@ -4,6 +4,7 @@ import SpotiUM.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -202,7 +203,7 @@ public class SpotController {
         int numeroMusicas = Integer.parseInt(playlistDados.get(1));
         ArrayList<Musica> musicas = new ArrayList<>();
         for (int i = 0; i<numeroMusicas; i++) {
-            String nome = this.view.pedeNome("música "+ i+1, false);
+            String nome = this.view.pedeNome("música "+ (i+1), false);
             try {
                 List <Musica> m = this.modelo.getMusicasPeloNome(nome);
                 Musica musica = m.size() == 1 ? m.getFirst() : SpotView.escolheDeUmaLista(m);
@@ -217,34 +218,74 @@ public class SpotController {
         this.view.printMensagem(SpotView.Mensagem.ADICIONAR_PLAYLIST, true);
     }
 
+    public void tocarListaReproducao (Iterator<Musica> iter, Utilizador user){
+        iter.forEachRemaining(m -> utilizadorOuveMusica(user, m));
+    }
+
     public void utilizadorOuveAlbum (Utilizador user, Album album) {
-        List <Musica> musicas = album.getMusicas();
-        for (Musica m : musicas) user.ouvirMusica(m);
+        ArrayList <Musica> musicas = album.getMusicas();
+        ListaReproducao lista = new ListaReproducao(musicas, user);
+        tocarListaReproducao(lista.makeIterador(), user);
     }
 
     public void utilizadorOuveAlbum (Utilizador user) {
         Album album = obterAlbumValidoDoUserInput();
-        List <Musica> musicas = album.getMusicas();
-        for (Musica m : musicas) user.ouvirMusica(m);
+        ArrayList <Musica> musicas = album.getMusicas();
+        ListaReproducao lista = new ListaReproducao(musicas, user);
+        tocarListaReproducao(lista.makeIterador(), user);
     }
+
     public void utilizadorOuvePlaylist (Utilizador user, Playlist playlist) {
-        List <Musica> musicas = playlist.getMusicas();
-        for (Musica m : musicas) user.ouvirMusica(m);
+        ArrayList <Musica> musicas = playlist.getMusicas();
+        ListaReproducao lista = new ListaReproducao(musicas, user);
+        tocarListaReproducao(lista.makeIterador(), user);
     }
+
     public void utilizadorOuvePlaylist (Utilizador user) {
         Playlist playlist = obterPlaylistValidaDoUserInput();
-        List <Musica> musicas = playlist.getMusicas();
-        for (Musica m : musicas) user.ouvirMusica(m);
+        ArrayList <Musica> musicas = playlist.getMusicas();
+        ListaReproducao lista = new ListaReproducao(musicas, user);
+        tocarListaReproducao(lista.makeIterador(), user);
+    }
+
+    public void utilizadorOuveMusica(Utilizador user, Musica musica) {
+        this.view.ouvirMusica(musica.getNome());
+        try {
+            imprimirLetra(musica);
+        } catch (Exception e) {
+            this.view.mostraMensagemErro("Erro na reprodução: ", e);
+        }
+        musica.reproduzir();
+        user.atualizaPontos();
+    }
+
+    public void imprimirLetra(Musica m){
+        String letra = m.getLetra();
+        //adicionar check para letra vazia?
+
+        letra = letra.replace("\\n", "\n");
+        String[] linhas = letra.split("\n");
+
+        //idealmente:
+        //int durSegundos = m.getDuracao();
+        //int atraso = durSegundos * 1000 / linhas.length; // atraso em ms para o Thread.sleep()
+        int atraso = 30000 / linhas.length; //cada musica demora 30 segundos
+
+        for (String l : linhas) {
+            try {
+                Thread.sleep(atraso);
+            } catch (Exception e) {
+                Thread.currentThread().interrupt();
+                this.view.mostraMensagemErro("Reprodução interrompida: ", e);
+                return;
+            }
+            this.view.printMensagem(l);
+        }
     }
 
     public void userVerPontos (Utilizador user) {
         int pontos = user.getPontos();
         this.view.printPontos (user.getNome(), pontos);
-    }
-
-    public void utilizadorOuveMusica(Utilizador user, Musica musica) {
-        user.ouvirMusica(musica);
-        this.view.ouvirMusica(musica.getNome(), musica.getLetra(), musica.getMusica());
     }
 
     public void userCriaPlaylist (Utilizador user) {

@@ -111,26 +111,8 @@ public class Musica implements Serializable {
         return new Musica(this);
     }
 
-    public void reproduzir() throws InterruptedException {
+    public void reproduzir(){
         nReproducoes++;
-        String letra = this.getLetra();
-        //adicionar check para letra vazia?
-
-        int durSegundos = this.getDuracao();
-        String[] linhas = letra.split("\n");
-
-        int atraso = durSegundos * 1000 / linhas.length; // atraso em ms para o Thread.sleep()
-
-        for (String l : linhas) {
-            try {
-                Thread.sleep(atraso);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.out.println("Playback stopped.");
-                return;
-            }
-            System.out.println(l);
-        }
     }
 
 }

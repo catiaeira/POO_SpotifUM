@@ -99,13 +99,9 @@ public class SpotView {
         return (reply);
     }
 
-    public void ouvirMusica(String nome, String letra, String musica) {
-        System.out.println("A ouvir a música " + nome);
-        System.out.println(letra);
-        System.out.println(musica);
+    public void ouvirMusica(String nome) {
+        System.out.println("A Tocar: " + nome);
     }
-
-
 
     public static <T> T escolheDeUmaLista(List<T> obj) {
         System.out.println("Qual pretendes?");

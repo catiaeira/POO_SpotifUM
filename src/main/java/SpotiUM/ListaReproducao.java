@@ -6,30 +6,16 @@ import java.util.Iterator;
 
 public class ListaReproducao {
     private ArrayList<Musica> listaReproducao;
-    private Iterator<Musica> iterador;
 
-    public ListaReproducao(ArrayList<Musica> musicas, Utilizador utilizador) {
-        this.listaReproducao = new ArrayList<>();
+    public ListaReproducao(ArrayList<Musica> musicas, Utilizador user) {
+        this.listaReproducao = new ArrayList<>(musicas);
 
-        if (utilizador.getPlanoSubscricao() instanceof PlanoFree) {
-            listaReproducao.addAll(musicas);
+        if (user.getPlanoSubscricao() instanceof PlanoFree) {
             Collections.shuffle(listaReproducao);
-        } else {
-            listaReproducao.addAll(musicas);
         }
-
-        this.iterador = listaReproducao.iterator();
     }
 
-    public void tocamusicas() {
-        iterador.forEachRemaining(m -> {
-            try {
-                m.reproduzir();
-            } catch (Exception e) {
-                System.err.println("Failed to play song: " + e.getMessage()); // can I??
-            }
-        });
+    public Iterator<Musica> makeIterador(){
+        return new ArrayList<Musica>(listaReproducao).iterator();
     }
-
-
 }
