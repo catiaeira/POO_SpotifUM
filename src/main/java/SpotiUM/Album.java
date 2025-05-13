@@ -36,11 +36,26 @@ public class Album implements Serializable {
                 .filter(m-> m.getNome().equalsIgnoreCase(nome))
                 .toList();
     }
+    public String printTitulos() {
+        ArrayList<Musica> m = this.musicas;
+        StringBuilder sb = new StringBuilder();
+        m.forEach(musica -> {
+            if (sb.length() > 0) sb.append("\n");
+            sb.append(musica.getNome());
+        });
+        return sb.toString();
+    }
 
     @Override
     public Album clone () {
         return new Album(this);
     }
+
+    @Override
+    public String toString(){
+        return "Álbum: " + nome + "\nCriada por: " + artista + "\n" + printTitulos();
+    }
+
 
     public void adicionarMusica(Musica musica) {this.musicas.add(musica);}
     public void removerMusica (Musica musica) {this.musicas.remove(musica);}
