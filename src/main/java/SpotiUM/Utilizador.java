@@ -7,6 +7,7 @@ public class Utilizador implements Serializable {
     private String email;
     private String morada;
     private PlanoSubscricao planoSubscricao;
+    private Biblioteca biblioteca;
     private int pontos;
 
     public Utilizador(){
@@ -14,6 +15,7 @@ public class Utilizador implements Serializable {
         this.email = "";
         this.morada = "";
         this.planoSubscricao = null;
+        this.biblioteca = new Biblioteca();
         this.pontos = 0;
     }
 
@@ -22,6 +24,7 @@ public class Utilizador implements Serializable {
         this.email = email;
         this.morada = morada;
         this.planoSubscricao = planoSubscricao;
+        this.biblioteca = new Biblioteca();
         this.pontos = pontos;
 
         if (planoSubscricao instanceof PlanoPremiumTop) {
@@ -34,6 +37,7 @@ public class Utilizador implements Serializable {
         this.email = u.getEmail();
         this.morada = u.getMorada();
         this.planoSubscricao = u.getPlanoSubscricao();
+        this.biblioteca = u.getBiblioteca();
         this.pontos = u.getPontos();
     }
 
@@ -56,6 +60,9 @@ public class Utilizador implements Serializable {
     public PlanoSubscricao getPlanoSubscricao(){
         return planoSubscricao;
     }
+    public Biblioteca getBiblioteca() {
+        return biblioteca;
+    }
     public int getPontos(){
         return pontos;
     }
@@ -71,6 +78,9 @@ public class Utilizador implements Serializable {
     }
     public void setPlanoSubscricao(PlanoSubscricao planoSubscricao){
         this.planoSubscricao = planoSubscricao;
+    }
+    public void setBiblioteca (Biblioteca biblioteca) {
+        this.biblioteca = biblioteca.clone();
     }
     public void setPontos(int pontos){
         this.pontos = pontos;

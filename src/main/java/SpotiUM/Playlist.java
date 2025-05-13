@@ -49,10 +49,11 @@ public class Playlist implements Serializable {
 
     @Override
     public String toString(){
-        return "Playlist: " + nome + "\nCriada por: " + criador + "\n" + this.printTitulos(musicas);
+        return "Playlist: " + nome + "\nCriada por: " + criador + "\n" + this.printTitulos();
     }
 
-    public String printTitulos(ArrayList<Musica> m) {
+    public String printTitulos() {
+        ArrayList<Musica> m = musicas;
         StringBuilder sb = new StringBuilder();
         m.forEach(musica -> {
             if (sb.length() > 0) sb.append("\n");

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class SpotView {
-    UserInput input;
+    private final UserInput input;
 
     public SpotView() {
         this.input = new UserInput();
@@ -15,32 +15,39 @@ public class SpotView {
         CARREGAR ("Dados carregados com sucesso!", "Erro ao carregar os dados"),
         GUARDAR ("Dados guardados!", "Dados não guardados"),
         ADICIONAR_MUSICA ("Música adicionada com sucesso!", "Adicionar música falhou"),
-        ADICIONAR_ALBUM ("Álbum adicionado com sucesso!", "Adicionar álbum falhou");
+        ADICIONAR_ALBUM ("Álbum adicionado com sucesso!", "Adicionar álbum falhou"),
+        ADICIONAR_PLAYLIST ("Playlist adicionada com sucesso!", "Não é possível adicionar playlist");
 
-        private final String successMessage;
-        private final String errorMessage;
+        private final String mensagemSucesso;
+        private final String mensagemErro;
+
+        Mensagem (String msg) {
+            this.mensagemSucesso = "";
+            this.mensagemErro = "";
+        }
 
         Mensagem (String mensagemSucesso, String mensagemErro) {
-            this.successMessage = mensagemSucesso;
-            this.errorMessage = mensagemErro;
+            this.mensagemSucesso = mensagemSucesso;
+            this.mensagemErro = mensagemErro;
         }
-
-        public void printMensagem (boolean wasSuccessful) {
-            System.out.println(wasSuccessful ? successMessage : errorMessage);
+        public void printMensagem (boolean foiSucesso) {
+            System.out.println(foiSucesso ? mensagemSucesso : mensagemErro);
         }
     }
-
-    public String pedeNomeMusica() {
-        return input.lerString("Nome da música: ");
+    public void printMensagem (String msg) {
+        System.out.println(msg);
     }
-
-    public String pedeNomeAlbum() {
-        return input.lerString("Nome do álbum: ");
-    }
-
-
     public void printMensagem (Mensagem msg, boolean b) {
         msg.printMensagem(b);
+    }
+
+    public String pedeNome (String objeto, boolean masculino) {
+        if (masculino) return input.lerString("Nome do " + objeto + ": ");
+        else return input.lerString("Nome da " + objeto + ": ");
+    }
+
+    public void printPontos (String user, int pontos) {
+        System.out.println(user + " tem " + String.valueOf(pontos) + " pontos");
     }
 
     public List<String> novoUtilizador(Predicate<String> validarNomeUser) {
@@ -81,6 +88,15 @@ public class SpotView {
 
         reply.add (Integer.toString(musicasNum));
         return reply;
+    }
+
+    public List<String> novaPlaylist () {
+        List<String> reply = new ArrayList<>();
+        reply.add(input.lerString("Nome: "));
+        int musicasNum = (input.lerInt("Número de músicas: ", "Tem de ter pelo menos uma música", i -> i>0));
+
+        reply.add (Integer.toString(musicasNum));
+        return (reply);
     }
 
     public void ouvirMusica(String nome, String letra, String musica) {
