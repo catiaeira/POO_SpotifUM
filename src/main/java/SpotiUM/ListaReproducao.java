@@ -15,7 +15,7 @@ public class ListaReproducao {
         }
     }
 
-    public Iterator<Musica> makeIterador(){
-        return new ArrayList<Musica>(listaReproducao).iterator();
+    public ArrayList<Musica> getLista(){
+        return new ArrayList<Musica>(listaReproducao);
     }
 }

@@ -3,10 +3,7 @@ package SpotiUM.MVC;
 import SpotiUM.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /*
 Esta classe vai ser a responsável por chamar os métodos dos componentes do programa
@@ -86,7 +83,7 @@ public class SpotController {
                 "Ouvir música",
                 "Adicionar a playlist"
         }, musica.getNome());
-        menu.setHandler(1, () -> utilizadorOuveMusica(utilizador, musica));
+        menu.setHandler(1, () -> utilizadorOuveMusica(utilizador, new ArrayList<>((Collection) musica)));
         menu.setHandler(2, () -> adicionaMusicaPlaylist(musica));
         menu.run();
     }
@@ -218,69 +215,66 @@ public class SpotController {
         this.view.printMensagem(SpotView.Mensagem.ADICIONAR_PLAYLIST, true);
     }
 
-    public void tocarListaReproducao (Iterator<Musica> iter, Utilizador user){
-        iter.forEachRemaining(m -> utilizadorOuveMusica(user, m));
-    }
+//    public void tocarListaReproducao (Iterator<Musica> iter, Utilizador user){
+//        iter.forEachRemaining(m -> utilizadorOuveMusica(user, m));
+//    }
 
     public void utilizadorOuveAlbum (Utilizador user, Album album) {
         ArrayList <Musica> musicas = album.getMusicas();
         ListaReproducao lista = new ListaReproducao(musicas, user);
-        tocarListaReproducao(lista.makeIterador(), user);
+        utilizadorOuveMusica(user, lista.getLista());
     }
 
     public void utilizadorOuveAlbum (Utilizador user) {
         Album album = obterAlbumValidoDoUserInput();
         ArrayList <Musica> musicas = album.getMusicas();
         ListaReproducao lista = new ListaReproducao(musicas, user);
-        tocarListaReproducao(lista.makeIterador(), user);
+        utilizadorOuveMusica(user, lista.getLista());
     }
 
     public void utilizadorOuvePlaylist (Utilizador user, Playlist playlist) {
         ArrayList <Musica> musicas = playlist.getMusicas();
         ListaReproducao lista = new ListaReproducao(musicas, user);
-        tocarListaReproducao(lista.makeIterador(), user);
+        utilizadorOuveMusica(user, lista.getLista());
     }
 
     public void utilizadorOuvePlaylist (Utilizador user) {
         Playlist playlist = obterPlaylistValidaDoUserInput();
         ArrayList <Musica> musicas = playlist.getMusicas();
         ListaReproducao lista = new ListaReproducao(musicas, user);
-        tocarListaReproducao(lista.makeIterador(), user);
+        utilizadorOuveMusica(user, lista.getLista());
     }
 
-    public void utilizadorOuveMusica(Utilizador user, Musica musica) {
-        this.view.ouvirMusica(musica.getNome());
-        try {
-            imprimirLetra(musica);
-        } catch (Exception e) {
-            this.view.mostraMensagemErro("Erro na reprodução: ", e);
-        }
-        musica.reproduzir();
-        user.atualizaPontos();
-    }
+    public void utilizadorOuveMusica(Utilizador user, ArrayList<Musica> musicas) {
+        PlaybackController playback = new PlaybackController(view, musicas);
+        playback.play(); // Start first song
 
-    public void imprimirLetra(Musica m){
-        String letra = m.getLetra();
-        //adicionar check para letra vazia?
+        boolean running = true;
+        while (running) {
+            UserInput input = new UserInput();
+            String cmd = input.lerString("").toUpperCase();
 
-        letra = letra.replace("\\n", "\n");
-        String[] linhas = letra.split("\n");
-
-        //idealmente:
-        //int durSegundos = m.getDuracao();
-        //int atraso = durSegundos * 1000 / linhas.length; // atraso em ms para o Thread.sleep()
-        int atraso = 30000 / linhas.length; //cada musica demora 30 segundos
-
-        for (String l : linhas) {
-            try {
-                Thread.sleep(atraso);
-            } catch (Exception e) {
-                Thread.currentThread().interrupt();
-                this.view.mostraMensagemErro("Reprodução interrompida: ", e);
-                return;
+            switch (cmd) {
+                case "S": // STOP
+                    playback.stop();
+                    view.printMensagem("Reprodução interrompida.");
+                    running = false;
+                    break;
+                case "F": // FORWARD (SKIP)
+                    playback.forward();
+                    break;
+                case "R": // REWIND (BACK)
+                    if (user.getPlanoSubscricao() instanceof PlanoFree) {
+                        view.printMensagem("Ação inválida!");
+                    } else {
+                        playback.back();
+                    }
+                    break;
+                default:
+                    view.printMensagem("Ação inválida!");
             }
-            this.view.printMensagem(l);
         }
+        user.atualizaPontos();
     }
 
     public void userVerPontos (Utilizador user) {
