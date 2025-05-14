@@ -7,14 +7,16 @@ import java.util.ArrayList;
 public class PlaybackController {
     private SpotView view;
     private ArrayList<Musica> musicas;
+    private Utilizador user;
     private volatile int cur; // Current song index
     private volatile Thread playbackThread;
     private volatile boolean isPlaying = false;
     private volatile boolean avancar = true;
 
-    public PlaybackController(SpotView view, ArrayList<Musica> musicas) {
+    public PlaybackController(SpotView view, ArrayList<Musica> musicas, Utilizador user) {
         this.view = view;
         this.musicas = musicas;
+        this.user = user;
         this.cur = 0;
     }
 
@@ -30,12 +32,12 @@ public class PlaybackController {
 
         Musica current = musicas.get(cur);
         view.ouvirMusica(current.getNome());
+        user.ouvirMusica(current);
 
         isPlaying = true;
         playbackThread = new Thread(() -> {
             try {
                 imprimirLetra(current);
-
                 if (avancar) {
                     synchronized (this) {
                         if (isPlaying) {
