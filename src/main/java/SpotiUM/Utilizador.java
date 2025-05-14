@@ -49,10 +49,9 @@ public class Utilizador implements Serializable {
         this.historico = new ArrayList<>(u.getHistorico());
     }
 
-    public void atualizaPontos(){
+    public void ouvirMusica(Musica musica){
         int pontosGanhos = planoSubscricao.calcularPontos(this);
         this.pontos += pontosGanhos;
-
         registarReproducao(musica);
         // System.out.println(nome + " ouviu \"" + musica.getNome() + "\" e ganhou " + pontosGanhos + " pontos. Total: " + pontos);
     }

@@ -215,10 +215,6 @@ public class SpotController {
         this.view.printMensagem(SpotView.Mensagem.ADICIONAR_PLAYLIST, true);
     }
 
-//    public void tocarListaReproducao (Iterator<Musica> iter, Utilizador user){
-//        iter.forEachRemaining(m -> utilizadorOuveMusica(user, m));
-//    }
-
     public void utilizadorOuveAlbum (Utilizador user, Album album) {
         ArrayList <Musica> musicas = album.getMusicas();
         ListaReproducao lista = new ListaReproducao(musicas, user);
@@ -246,7 +242,7 @@ public class SpotController {
     }
 
     public void utilizadorOuveMusica(Utilizador user, ArrayList<Musica> musicas) {
-        PlaybackController playback = new PlaybackController(view, musicas);
+        PlaybackController playback = new PlaybackController(view, musicas, user);
         playback.play(); // Start first song
 
         boolean running = true;
@@ -274,7 +270,6 @@ public class SpotController {
                     view.printMensagem("Ação inválida!");
             }
         }
-        user.atualizaPontos();
     }
 
     public void userVerPontos (Utilizador user) {
