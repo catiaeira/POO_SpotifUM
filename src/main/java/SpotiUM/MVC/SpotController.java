@@ -37,8 +37,8 @@ public class SpotController {
         Utilizador utilizador;
         try { utilizador = this.modelo.getUtilizador(user);
         } catch (UtilizadorException e) {
-           this.view.mostraMensagemErro(e);
-           return;
+            this.view.mostraMensagemErro(e);
+            return;
         }
         NewMenu menu = new NewMenu(new String[]{
                 "Pesquisar música",
@@ -87,7 +87,11 @@ public class SpotController {
                 "Adicionar à playlist"
         }, musica.getNome());
 
-        menu.setHandler(1, () -> utilizadorOuveMusica(utilizador, new ArrayList<>((Collection) musica)));
+        menu.setHandler(1, () -> {
+            ArrayList <Musica> list = new ArrayList<>();
+            list.add(musica);
+            utilizadorOuveMusica(utilizador, list);
+        });
         menu.setHandler(2, () -> adicionaMusicaPlaylist(musica, utilizador));
 
         menu.run();
@@ -138,25 +142,25 @@ public class SpotController {
         Biblioteca biblioteca = utilizador.getBiblioteca();
         menu.setHandler(1, () -> this.view.printMensagem(biblioteca.toString()));
         menu.setHandler(2, () -> {
-                                    List <Album> albuns = biblioteca.getAlbuns();
-                                    Album album = obterAlbumValidoDoUserInput (albuns);
-                                    utilizadorOuveAlbum(utilizador, album);
-                                    });
+            List <Album> albuns = biblioteca.getAlbuns();
+            Album album = obterAlbumValidoDoUserInput (albuns);
+            utilizadorOuveAlbum(utilizador, album);
+        });
         menu.setHandler(3, () -> {
-                                    List<Playlist> playlists = biblioteca.getPlaylists();
-                                    Playlist playlist = obterPlaylistValidoDoUserInput(playlists);
-                                    utilizadorOuvePlaylist(utilizador, playlist);
-                                    });
+            List<Playlist> playlists = biblioteca.getPlaylists();
+            Playlist playlist = obterPlaylistValidoDoUserInput(playlists);
+            utilizadorOuvePlaylist(utilizador, playlist);
+        });
         menu.setHandler(4, () -> {
-                                    List <Album> albuns = biblioteca.getAlbuns();
-                                    Album album = obterAlbumValidoDoUserInput (albuns);
-                                    biblioteca.removeAlbuns(album);
+            List <Album> albuns = biblioteca.getAlbuns();
+            Album album = obterAlbumValidoDoUserInput (albuns);
+            biblioteca.removeAlbuns(album);
         });
         menu.setHandler(5, () -> {
-                                    List<Playlist> playlists = biblioteca.getPlaylists();
-                                    Playlist playlist = obterPlaylistValidoDoUserInput(playlists);
-                                    biblioteca.removePlaylists(playlist);
-                                    });
+            List<Playlist> playlists = biblioteca.getPlaylists();
+            Playlist playlist = obterPlaylistValidoDoUserInput(playlists);
+            biblioteca.removePlaylists(playlist);
+        });
 
         menu.setPreCondition(2, () -> !biblioteca.getAlbuns()   .isEmpty());
         menu.setPreCondition(3, () -> !biblioteca.getPlaylists().isEmpty());
@@ -225,7 +229,7 @@ public class SpotController {
         for (int i = 0; i<numeroMusicas; i++) {
 
             String nome = this.view.pedeNome("música " + (i+1), false);
-          
+
             try {
                 List <Musica> m = this.modelo.getMusicasPeloNome(nome);
                 Musica musica = m.size() == 1 ? m.getFirst() : SpotView.escolheDeUmaLista(m);
@@ -264,7 +268,7 @@ public class SpotController {
     }
 
     public void utilizadorOuvePlaylist (Utilizador user) {
-        Playlist playlist = obterPlaylistValidaDoUserInput();
+        Playlist playlist = obterPlaylistValidaDoUserInput(user);
         if (playlist == null){
             this.view.printMensagem("Playlist não existe");
             return;
@@ -321,7 +325,7 @@ public class SpotController {
         this.view.printHistorico(user);
     }
 
-    public Playlist obterPlaylistValidaDoUserInput () {
+    public Playlist obterPlaylistValidaDoUserInput (Utilizador user) {
         String nomePlaylist = this.view.pedeNome ("Playlist", false);
         List<Playlist> playlists = getPlaylists(nomePlaylist);
         if (playlists == null || playlists.isEmpty()) return null;
