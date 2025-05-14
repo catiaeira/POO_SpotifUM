@@ -2,40 +2,74 @@ package SpotiUM;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static SpotiUM.MapComNomeUtils.*;
 
 public class Biblioteca implements Serializable {
-    private ArrayList<Album> albuns;
-    private ArrayList<Playlist> playlists;
+    private final HashMap<String, List<Album>> albuns;
+    private final HashMap<String,  List<Playlist>> playlists;
 
     public Biblioteca () {
-        albuns = new ArrayList<>();
-        playlists = new ArrayList<>();
+        albuns = new HashMap<>();
+        playlists = new HashMap<>();
     }
     public Biblioteca (Biblioteca b) {
-        albuns = b.getAlbuns();
-        playlists = b.getPlaylists();
+        albuns = b.getAlbunsMap();
+        playlists = b.getPlaylistsMap();
+    }
+    public HashMap<String, List<Album>> getAlbunsMap() {
+        return new HashMap<>(this.albuns);
+    }
+    public HashMap<String, List<Playlist>> getPlaylistsMap() {
+        return new HashMap<>(this.playlists);
     }
 
-    public ArrayList<Album> getAlbuns() {
-        return albuns;
+    public List<Album> getAlbuns() {
+        return getGrupo(this.albuns);
     }
-    public ArrayList<Playlist> getPlaylists() {
-        return playlists;
-    }
-
-    public void setAlbuns (ArrayList<Album> albuns) {
-        this.albuns = albuns;
-    }
-    public void setPlaylists (ArrayList<Playlist> playlists) {
-        this.playlists = playlists;
+    public List<Playlist> getPlaylists() {
+        return getGrupo(this.playlists);
     }
 
-    public void adicionaAlbum (Album album) {this.albuns.add(album);}
-    public void adicionaPlaylist (Playlist playlist) {this.playlists.add(playlist);}
+    public List<Album> getAlbuns(String name) {
+        return getGrupos(this.albuns,name);
+    }
+    public List<Playlist> getPlaylists(String name) {
+        return getGrupos(this.playlists,name);
+    }
 
-    public void removeAlbum (Album album) {this.albuns.remove(album);}
-    public void removePlaylist (Playlist playlist) {this.playlists.remove(playlist);}
+    public void adicionaAlbum(Album album) {
+        adicionaGrupoDeMusicas(this.albuns, album);
+    }
+    public void adicionaPlaylist(Playlist playlist) {
+        adicionaGrupoDeMusicas(this.playlists, playlist);
+    }
 
+    public void removePlaylists(Playlist playlist) {
+        removeGrupoDeMusicas(this.playlists, playlist);
+    }
+
+    public void removeAlbuns(Album album) {
+        removeGrupoDeMusicas(this.albuns, album);
+    }
+
+    public boolean estaNaBiblioteca(Album album) {
+        return (estaGuardado(this.albuns, album));
+    }
+
+    public boolean estaNaBiblioteca (Playlist playlist) {
+        return estaGuardado(this.playlists, playlist);
+    }
+
+    public String albunsToString() {
+        return gruposToString(albuns);
+    }
+
+    public String playlistToString() {
+        return  gruposToString(playlists);
+    }
 
     @Override
     public Biblioteca clone () {
@@ -44,19 +78,19 @@ public class Biblioteca implements Serializable {
 
     @Override
     public String toString(){
+        if (albuns.isEmpty() && playlists.isEmpty()) return "Biblioteca está vazia!";
         StringBuilder sb = new StringBuilder();
 
-        sb.append("** Biblioteca **\n");
-        sb.append("Álbuns:");
-        this.albuns.forEach(albuns -> {
-            if (sb.length() > 0) sb.append("\n");
-            sb.append(albuns.getNome());
-        });
-        sb.append("\nPlaylists:");
-        this.playlists.forEach(playlist -> {
-            if (sb.length() > 0) sb.append("\n");
-            sb.append(playlist.getNome());
-        });
+        sb.append("** Biblioteca **");
+        if (!albuns.isEmpty()) {
+            sb.append("\n- Álbuns:\n");
+            sb.append(albunsToString());
+        }
+        if (!playlists.isEmpty()) {
+            sb.append("\n- Playlists:\n");
+            sb.append(playlistToString());
+        }
+
         return sb.toString();
     }
 }
