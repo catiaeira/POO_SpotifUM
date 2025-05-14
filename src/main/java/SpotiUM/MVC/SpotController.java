@@ -3,9 +3,7 @@ package SpotiUM.MVC;
 import SpotiUM.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /*
 Esta classe vai ser a responsável por chamar os métodos dos componentes do programa
@@ -85,7 +83,7 @@ public class SpotController {
                 "Ouvir música",
                 "Adicionar a playlist"
         }, musica.getNome());
-        menu.setHandler(1, () -> utilizadorOuveMusica(utilizador, musica));
+        menu.setHandler(1, () -> utilizadorOuveMusica(utilizador, new ArrayList<>((Collection) musica)));
         menu.setHandler(2, () -> adicionaMusicaPlaylist(musica));
         menu.run();
     }
@@ -202,7 +200,7 @@ public class SpotController {
         int numeroMusicas = Integer.parseInt(playlistDados.get(1));
         ArrayList<Musica> musicas = new ArrayList<>();
         for (int i = 0; i<numeroMusicas; i++) {
-            String nome = this.view.pedeNome("música "+ i+1, false);
+            String nome = this.view.pedeNome("música "+ (i+1), false);
             try {
                 List <Musica> m = this.modelo.getMusicasPeloNome(nome);
                 Musica musica = m.size() == 1 ? m.getFirst() : SpotView.escolheDeUmaLista(m);
@@ -217,34 +215,71 @@ public class SpotController {
         this.view.printMensagem(SpotView.Mensagem.ADICIONAR_PLAYLIST, true);
     }
 
+//    public void tocarListaReproducao (Iterator<Musica> iter, Utilizador user){
+//        iter.forEachRemaining(m -> utilizadorOuveMusica(user, m));
+//    }
+
     public void utilizadorOuveAlbum (Utilizador user, Album album) {
-        List <Musica> musicas = album.getMusicas();
-        for (Musica m : musicas) user.ouvirMusica(m);
+        ArrayList <Musica> musicas = album.getMusicas();
+        ListaReproducao lista = new ListaReproducao(musicas, user);
+        utilizadorOuveMusica(user, lista.getLista());
     }
 
     public void utilizadorOuveAlbum (Utilizador user) {
         Album album = obterAlbumValidoDoUserInput();
-        List <Musica> musicas = album.getMusicas();
-        for (Musica m : musicas) user.ouvirMusica(m);
+        ArrayList <Musica> musicas = album.getMusicas();
+        ListaReproducao lista = new ListaReproducao(musicas, user);
+        utilizadorOuveMusica(user, lista.getLista());
     }
+
     public void utilizadorOuvePlaylist (Utilizador user, Playlist playlist) {
-        List <Musica> musicas = playlist.getMusicas();
-        for (Musica m : musicas) user.ouvirMusica(m);
+        ArrayList <Musica> musicas = playlist.getMusicas();
+        ListaReproducao lista = new ListaReproducao(musicas, user);
+        utilizadorOuveMusica(user, lista.getLista());
     }
+
     public void utilizadorOuvePlaylist (Utilizador user) {
         Playlist playlist = obterPlaylistValidaDoUserInput();
-        List <Musica> musicas = playlist.getMusicas();
-        for (Musica m : musicas) user.ouvirMusica(m);
+        ArrayList <Musica> musicas = playlist.getMusicas();
+        ListaReproducao lista = new ListaReproducao(musicas, user);
+        utilizadorOuveMusica(user, lista.getLista());
+    }
+
+    public void utilizadorOuveMusica(Utilizador user, ArrayList<Musica> musicas) {
+        PlaybackController playback = new PlaybackController(view, musicas);
+        playback.play(); // Start first song
+
+        boolean running = true;
+        while (running) {
+            UserInput input = new UserInput();
+            String cmd = input.lerString("").toUpperCase();
+
+            switch (cmd) {
+                case "S": // STOP
+                    playback.stop();
+                    view.printMensagem("Reprodução interrompida.");
+                    running = false;
+                    break;
+                case "F": // FORWARD (SKIP)
+                    playback.forward();
+                    break;
+                case "R": // REWIND (BACK)
+                    if (user.getPlanoSubscricao() instanceof PlanoFree) {
+                        view.printMensagem("Ação inválida!");
+                    } else {
+                        playback.back();
+                    }
+                    break;
+                default:
+                    view.printMensagem("Ação inválida!");
+            }
+        }
+        user.atualizaPontos();
     }
 
     public void userVerPontos (Utilizador user) {
         int pontos = user.getPontos();
         this.view.printPontos (user.getNome(), pontos);
-    }
-
-    public void utilizadorOuveMusica(Utilizador user, Musica musica) {
-        user.ouvirMusica(musica);
-        this.view.ouvirMusica(musica.getNome(), musica.getLetra(), musica.getMusica());
     }
 
     public void userCriaPlaylist (Utilizador user) {

@@ -49,14 +49,10 @@ public class Utilizador implements Serializable {
         this.historico = new ArrayList<>(u.getHistorico());
     }
 
-    public void ouvirMusica(Musica musica){
-        try {
-            musica.reproduzir();
-        } catch (Exception e) {
-            System.err.println("Failed to play song: " + e.getMessage()); // can I??
-        }
+    public void atualizaPontos(){
         int pontosGanhos = planoSubscricao.calcularPontos(this);
         this.pontos += pontosGanhos;
+
         registarReproducao(musica);
         // System.out.println(nome + " ouviu \"" + musica.getNome() + "\" e ganhou " + pontosGanhos + " pontos. Total: " + pontos);
     }
