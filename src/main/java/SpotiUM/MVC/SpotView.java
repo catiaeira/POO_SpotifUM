@@ -15,8 +15,8 @@ public class SpotView {
         CARREGAR ("Dados carregados com sucesso!", "Erro ao carregar os dados"),
         GUARDAR ("Dados guardados!", "Dados não guardados"),
         ADICIONAR_MUSICA ("Música adicionada com sucesso!", "Adicionar música falhou"),
-        ADICIONAR_ALBUM ("Álbum adicionado com sucesso!", "Adicionar álbum falhou"),
-        ADICIONAR_PLAYLIST ("Playlist adicionada com sucesso!", "Não é possível adicionar playlist");
+        ADICIONAR_ALBUM ("Álbum adicionado com sucesso!", "Álbum já existe"),
+        ADICIONAR_PLAYLIST ("Playlist adicionada com sucesso!", "Playlist já existe");
 
         private final String mensagemSucesso;
         private final String mensagemErro;
@@ -93,6 +93,9 @@ public class SpotView {
     public List<String> novaPlaylist () {
         List<String> reply = new ArrayList<>();
         reply.add(input.lerString("Nome: "));
+        int publicaVsPrivada = input.lerInt("1. Pública\n2. Privada ", "Insere ou 1 ou 2", i -> i == 1 || i == 2);
+        if (publicaVsPrivada == 1) reply.add("publica");
+        else reply.add("privada");
         int musicasNum = (input.lerInt("Número de músicas: ", "Tem de ter pelo menos uma música", i -> i>0));
 
         reply.add (Integer.toString(musicasNum));
@@ -108,9 +111,8 @@ public class SpotView {
 
 
     public static <T> T escolheDeUmaLista(List<T> obj) {
-        System.out.println("Qual pretendes?");
+        System.out.println("Qual pretendes?\n-----");
         for (int i = 0; i< obj.size(); i++) {
-            System.out.println("-----");
             System.out.println(i+1 + ".");
             System.out.println(obj.get(i).toString());
             System.out.println("-----");

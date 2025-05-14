@@ -43,9 +43,9 @@ public class SpotController {
            return;
         }
         NewMenu menu = new NewMenu(new String[]{
-                "Ouvir música",
-                "Ouvir álbum",
-                "Ouvir playlist",
+                "Pesquisar música",
+                "Pesquisar álbum",
+                "Pesquisar playlist",
                 "Ver biblioteca",
                 "Criar playlist",
                 "Ver histórico",
@@ -86,7 +86,7 @@ public class SpotController {
                 "Adicionar a playlist"
         }, musica.getNome());
         menu.setHandler(1, () -> utilizadorOuveMusica(utilizador, musica));
-        menu.setHandler(2, () -> adicionaMusicaPlaylist(musica));
+        menu.setHandler(2, () -> adicionaMusicaPlaylist(musica, utilizador));
         menu.run();
     }
 
@@ -106,8 +106,11 @@ public class SpotController {
     }
 
     public void playlistMenu(Utilizador utilizador) {
-        Playlist playlist = obterPlaylistValidaDoUserInput();
-        if (playlist == null) return;
+        Playlist playlist = obterPlaylistValidaDoUserInput(utilizador);
+        if (playlist == null){
+            this.view.printMensagem("Playlist não existe");
+            return;
+        }
 
         NewMenu menu = new NewMenu(new String[] {
                 "Ouvir playlist",
@@ -199,10 +202,10 @@ public class SpotController {
     public void novaPlaylist (Utilizador utilizador) {
         List <String> playlistDados = this.view.novaPlaylist();
 
-        int numeroMusicas = Integer.parseInt(playlistDados.get(1));
+        int numeroMusicas = Integer.parseInt(playlistDados.get(2));
         ArrayList<Musica> musicas = new ArrayList<>();
         for (int i = 0; i<numeroMusicas; i++) {
-            String nome = this.view.pedeNome("música "+ i+1, false);
+            String nome = this.view.pedeNome("música " + (i+1), false);
             try {
                 List <Musica> m = this.modelo.getMusicasPeloNome(nome);
                 Musica musica = m.size() == 1 ? m.getFirst() : SpotView.escolheDeUmaLista(m);
@@ -212,8 +215,12 @@ public class SpotController {
                 return;
             }
         }
-        Playlist playlist = new Playlist(playlistDados.getFirst(), utilizador, musicas);
+        boolean isPublica = playlistDados.get(1).equals("publica");
+
+        Playlist playlist = new Playlist(playlistDados.getFirst(), utilizador, musicas, isPublica);
+
         this.modelo.adicionarPlaylist(playlist);
+        utilizador.getBiblioteca().adicionaPlaylist(playlist);      // adiciona à biblioteca como default
         this.view.printMensagem(SpotView.Mensagem.ADICIONAR_PLAYLIST, true);
     }
 
@@ -232,7 +239,11 @@ public class SpotController {
         for (Musica m : musicas) user.ouvirMusica(m);
     }
     public void utilizadorOuvePlaylist (Utilizador user) {
-        Playlist playlist = obterPlaylistValidaDoUserInput();
+        Playlist playlist = obterPlaylistValidaDoUserInput(user);
+        if (playlist == null){
+            this.view.printMensagem("Playlist não existe");
+            return;
+        }
         List <Musica> musicas = playlist.getMusicas();
         for (Musica m : musicas) user.ouvirMusica(m);
     }
@@ -254,13 +265,19 @@ public class SpotController {
         else this.view.printMensagem(SpotView.Mensagem.ADICIONAR_PLAYLIST, false);
     }
 
-    public Playlist obterPlaylistValidaDoUserInput () {
+    public Playlist obterPlaylistValidaDoUserInput (Utilizador user) {
         String nomePlaylist = this.view.pedeNome ("Playlist", false);
         List<Playlist> playlists = getPlaylists(nomePlaylist);
         if (playlists == null || playlists.isEmpty()) return null;
 
-        return playlists.size() == 1 ? playlists.getFirst() : SpotView.escolheDeUmaLista(playlists);
+        List <Playlist> filteredPlaylist = playlists.stream().
+                filter(p -> p.isPublica() || p.getCriador().equals(user)).toList();
+        if (filteredPlaylist.isEmpty()) return null;
+
+        return filteredPlaylist.size() == 1 ? filteredPlaylist.getFirst() : SpotView.escolheDeUmaLista(filteredPlaylist);
     }
+
+
 
     public Musica obterMusicaValidaDoUserInput () {
         String musicaNome = this.view.pedeNome("música", false);
@@ -297,9 +314,12 @@ public class SpotController {
         return albuns;
     }
 
-    public void adicionaMusicaPlaylist (Musica m) {
-        Playlist p = obterPlaylistValidaDoUserInput();
-        if (p == null) return;
+    public void adicionaMusicaPlaylist (Musica m, Utilizador user) {
+        Playlist p = obterPlaylistValidaDoUserInput(user);
+        if (p == null){
+            this.view.printMensagem("Playlist não existe");
+            return;
+        }
         p.adicionarMusica(m);
         this.view.printMensagem(SpotView.Mensagem.ADICIONAR_MUSICA, true);
     }
@@ -315,11 +335,19 @@ public class SpotController {
         return playlists;
     }
     public void adicionaAlbumBiblioteca (Utilizador utilizador, Album album) {
+        if (utilizador.getBiblioteca().estaNaBiblioteca(album)) {
+            this.view.printMensagem(SpotView.Mensagem.ADICIONAR_ALBUM, false);
+            return;
+        }
         utilizador.getBiblioteca().adicionaAlbum(album);
         this.view.printMensagem(SpotView.Mensagem.ADICIONAR_ALBUM, true);
     }
 
     public void adicionaPlaylistBiblioteca (Utilizador utilizador, Playlist playlist) {
+        if (utilizador.getBiblioteca().estaNaBiblioteca(playlist)) {
+            this.view.printMensagem(SpotView.Mensagem.ADICIONAR_PLAYLIST, false);
+            return;
+        }
         utilizador.getBiblioteca().adicionaPlaylist(playlist);
         this.view.printMensagem(SpotView.Mensagem.ADICIONAR_PLAYLIST, true);
     }

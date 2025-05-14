@@ -90,7 +90,7 @@ public class SpotModel implements Serializable {
 
     public List <Playlist> getPlaylist (String nome) throws PlaylistException {
         List <Playlist> playlist = this.playlistsPorTitulo.get(nome.toLowerCase());
-        if (playlist.isEmpty()) throw new PlaylistException("Não existe nenhuma playlist com esse nome");
+        if (playlist == null || playlist.isEmpty()) throw new PlaylistException("Não existe nenhuma playlist com esse nome");
         return playlist;
     }
 

@@ -36,6 +36,8 @@ public class Biblioteca implements Serializable {
     public void removeAlbum (Album album) {this.albuns.remove(album);}
     public void removePlaylist (Playlist playlist) {this.playlists.remove(playlist);}
 
+    public boolean estaNaBiblioteca (Album album) {return this.albuns.stream().anyMatch(a -> a.equals(album));}
+    public boolean estaNaBiblioteca (Playlist playlist) {return this.playlists.stream().anyMatch(p -> p.equals(playlist));}
 
     @Override
     public Biblioteca clone () {
@@ -44,19 +46,25 @@ public class Biblioteca implements Serializable {
 
     @Override
     public String toString(){
+        if (albuns.isEmpty() && playlists.isEmpty()) return "Biblioteca está vazia!";
         StringBuilder sb = new StringBuilder();
 
-        sb.append("** Biblioteca **\n");
-        sb.append("Álbuns:");
-        this.albuns.forEach(albuns -> {
-            if (sb.length() > 0) sb.append("\n");
-            sb.append(albuns.getNome());
-        });
-        sb.append("\nPlaylists:");
-        this.playlists.forEach(playlist -> {
-            if (sb.length() > 0) sb.append("\n");
-            sb.append(playlist.getNome());
-        });
+        sb.append("** Biblioteca **");
+        if (!albuns.isEmpty()) {
+            sb.append("\n- Álbuns:");
+            this.albuns.forEach(albuns -> {
+                if (sb.length() > 0) sb.append("\n");
+                sb.append(albuns.toString());
+            });
+        }
+        if (!playlists.isEmpty()) {
+            sb.append("\n- Playlists:");
+            this.playlists.forEach(playlist -> {
+                if (sb.length() > 0) sb.append("\n");
+                sb.append(playlist.toString());
+            });
+        }
+
         return sb.toString();
     }
 }

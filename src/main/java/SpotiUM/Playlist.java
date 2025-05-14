@@ -8,15 +8,17 @@ public class Playlist implements Serializable {
     private Utilizador criador; //null se for playlist aleatória, criada por SpotiUM, senão o utilizador em si
     private ArrayList<Musica> musicas;
     private int duracao;
+    private boolean isPublica;
 
     public Playlist() {
         this.nome = "";
         this.criador = null;
         this.musicas = new ArrayList<>();
         this.duracao = 0;
+        this.isPublica = false;
     }
 
-    public Playlist(String nome, Utilizador criador, ArrayList<Musica> musicas) {
+    public Playlist(String nome, Utilizador criador, ArrayList<Musica> musicas, boolean isPublica) {
         this.nome = nome;
         this.criador = criador;
         this.musicas = new ArrayList<>(musicas);
@@ -25,6 +27,7 @@ public class Playlist implements Serializable {
             dur += m.getDuracao();
         }
         this.duracao = dur;
+        this.isPublica = isPublica;
     }
 
     public Playlist (Playlist playlist) {
@@ -32,6 +35,7 @@ public class Playlist implements Serializable {
         this.criador = playlist.getCriador();
         this.musicas = playlist.getMusicas();
         this.duracao = playlist.getDuracao();
+        this.isPublica = playlist.isPublica();
     }
     
     public String getNome() {
@@ -62,9 +66,13 @@ public class Playlist implements Serializable {
         this.duracao = dur;
     }
 
+    public boolean isPublica() {
+        return this.isPublica;
+    }
+
     @Override
     public String toString(){
-        return "Playlist: " + nome + "\nCriada por: " + criador + "\n" + this.printTitulos();
+        return "Playlist: " + nome + "\nCriada por: " + criador.getNome() + "\n" + this.printTitulos();
     }
 
     public String printTitulos() {
