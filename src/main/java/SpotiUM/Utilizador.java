@@ -1,6 +1,9 @@
 package SpotiUM;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utilizador implements Serializable {
     private String nome; // a assumir que é username (único)
@@ -9,6 +12,8 @@ public class Utilizador implements Serializable {
     private PlanoSubscricao planoSubscricao;
     private Biblioteca biblioteca;
     private int pontos;
+    private List<Reproducao> historico;
+
 
     public Utilizador(){
         this.nome = "";
@@ -17,6 +22,7 @@ public class Utilizador implements Serializable {
         this.planoSubscricao = null;
         this.biblioteca = new Biblioteca();
         this.pontos = 0;
+        this.historico = new ArrayList<>();
     }
 
     public Utilizador(String nome, String email, String morada, PlanoSubscricao planoSubscricao, int pontos){
@@ -26,6 +32,7 @@ public class Utilizador implements Serializable {
         this.planoSubscricao = planoSubscricao;
         this.biblioteca = new Biblioteca();
         this.pontos = pontos;
+        this.historico = new ArrayList<>();
 
         if (planoSubscricao instanceof PlanoPremiumTop) {
             this.pontos = 100; //os subscritores do plano premium top recebem 100 pontos extra, manter assim se começar sempre em 0, se não modificar tbm
@@ -39,18 +46,31 @@ public class Utilizador implements Serializable {
         this.planoSubscricao = u.getPlanoSubscricao();
         this.biblioteca = u.getBiblioteca();
         this.pontos = u.getPontos();
+        this.historico = new ArrayList<>(u.getHistorico());
     }
 
     public void ouvirMusica(Musica musica){
-        try {
-            musica.reproduzir();
-        } catch (Exception e) {
-            System.err.println("Failed to play song: " + e.getMessage()); // can I??
-        }
         int pontosGanhos = planoSubscricao.calcularPontos(this);
         this.pontos += pontosGanhos;
+        registarReproducao(musica);
         // System.out.println(nome + " ouviu \"" + musica.getNome() + "\" e ganhou " + pontosGanhos + " pontos. Total: " + pontos);
     }
+
+    public void registarReproducao(Musica musica) {
+        this.historico.add(new Reproducao(musica, LocalDate.now()));
+    }
+
+    public List<Reproducao> getHistorico() {
+        return new ArrayList<>(historico);
+    }
+
+    public List<Reproducao> getHistoricoEntre(LocalDate inicio, LocalDate fim) {
+        return historico.stream()
+                .filter(r -> !r.getData().isBefore(inicio) && !r.getData().isAfter(fim))
+                .toList();
+    }
+
+
 
     public String getNome(){
         return nome;

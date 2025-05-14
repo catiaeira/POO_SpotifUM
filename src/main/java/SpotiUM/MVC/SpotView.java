@@ -1,5 +1,8 @@
 package SpotiUM.MVC;
 
+import SpotiUM.Utilizador;
+import SpotiUM.Reproducao;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -48,6 +51,20 @@ public class SpotView {
 
     public void printPontos (String user, int pontos) {
         System.out.println(user + " tem " + String.valueOf(pontos) + " pontos");
+    }
+
+    public void printHistorico(Utilizador u) {
+        List<Reproducao> historico = u.getHistorico();
+
+        if (historico.isEmpty()) {
+            System.out.println("Histórico vazio.");
+            return;
+        }
+
+        System.out.println("Histórico de reproduções:");
+        for (Reproducao r : historico) {
+            System.out.println("- " + r.getMusica().getNome() + " por " + r.getMusica().getInterprete() + " em " + r.getData());
+        }
     }
 
     public List<String> novoUtilizador(Predicate<String> validarNomeUser) {
@@ -102,13 +119,9 @@ public class SpotView {
         return (reply);
     }
 
-    public void ouvirMusica(String nome, String letra, String musica) {
-        System.out.println("A ouvir a música " + nome);
-        System.out.println(letra);
-        System.out.println(musica);
+    public void ouvirMusica(String nome) {
+        System.out.println("A Tocar: " + nome);
     }
-
-
 
     public static <T> T escolheDeUmaLista(List<T> obj) {
         System.out.println("Qual pretendes?\n-----");
