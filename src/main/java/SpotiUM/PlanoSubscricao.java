@@ -20,8 +20,7 @@ public abstract class PlanoSubscricao implements Serializable {
 
     public abstract boolean temListasFavoritas();
 
-//    @Override //usei para testar mas estou indecisa de mantenho ou não
-//    public String toString() {
-//        return nome;
-//    }
+    public String toString() {
+       return nome;
+    }
 }

@@ -3,50 +3,32 @@ import SpotiUM.*;
 
 import java.io.*;
 import java.util.*;
+import static SpotiUM.MapComNomeUtils.*;
 
 /*
 Esta classe vai "segurar" os dados do programa, como os users, álbuns e playlists, etc. 
 Métodos de remover ou adicionar componentes pertencem aqui.
  */
 public class SpotModel implements Serializable {
-    private Map<Integer, Album> albunsPorID;
-    private Map<Integer, Playlist> playlistsPorID;
     private Map<String, Utilizador> utilizadores; // key string é sempre em lowercase
-    private Map<String, List<Album>> albunsPorTitulo; // key string é sempre em lowercase
+    private Map<String, List<Album>> albunsPorTitulo;
     private Map<String, List<Playlist>> playlistsPorTitulo;
 
-    private Integer albumProximoID;
-    private Integer playlistProximoID;
-
     public SpotModel() {
-        this.albunsPorID = new HashMap<>();
-        this.playlistsPorID = new HashMap<>();
         this.utilizadores = new HashMap<>();
         this.albunsPorTitulo = new HashMap<>();
         this.playlistsPorTitulo = new HashMap<>();
-        albumProximoID = 1;
-        playlistProximoID = 1;
     }
 
-    public Map <String, Utilizador> getUtilizadores()     { return new HashMap<> (this.utilizadores);}
-    public Map <Integer, Album> getAlbunsPorID()          { return new HashMap<>(this.albunsPorID);}
-    public Map <Integer, Playlist> getPlaylistsPorID()    { return new HashMap<>(this.playlistsPorID);}
+    public Map <String, Utilizador> getUtilizadores()           { return new HashMap<> (this.utilizadores);}
+    public Map <String, List<Album>> getAlbunsPorTitulo()       { return new HashMap<>(this.albunsPorTitulo);}
+    public Map <String, List<Playlist>> getPlaylistsPorTitulo() { return new HashMap<>(this.playlistsPorTitulo);}
 
-    public void setAlbunsPorID(Map<Integer, Album> albunsPorID) {
-        this.albunsPorID = new HashMap<>(albunsPorID);
-        this.albumProximoID = albunsPorID.size() + 1;
-        this.albunsPorTitulo.clear();
-        for (Album a : albunsPorID.values()) {
-            albunsPorTitulo.computeIfAbsent(a.getNome(), t -> new ArrayList<>()).add(a);
-        }
+    public void setAlbunsPorTitulo(Map<String, List<Album>> albunsPorTitulo) {
+        deepCopy(this.albunsPorTitulo, albunsPorTitulo);
     }
-    public void setPlaylistsPorID(Map<Integer, Playlist> playlistsPorID) {
-        this.playlistsPorID = new HashMap<>(playlistsPorID);
-        this.playlistProximoID = playlistsPorID.size() + 1;
-        this.playlistsPorTitulo.clear();
-        for (Playlist p : playlistsPorID.values()) {
-            playlistsPorTitulo.computeIfAbsent(p.getNome(), t -> new ArrayList<>()).add(p);
-        }
+    public void setPlaylistsPorTitulo(Map<String, List<Playlist>> playlistsPorTitulo) {
+        deepCopy(this.playlistsPorTitulo, playlistsPorTitulo);
     }
 
     public void setUtilizadores(Map <String, Utilizador> utilizadores) {
@@ -59,15 +41,11 @@ public class SpotModel implements Serializable {
         this.utilizadores.put(utilizador.getNome().toLowerCase(), utilizador);
     }
     public void adicionaAlbum(Album album) {
-        Album albumCopia = album.clone();
-        this.albunsPorID.put(albumProximoID++, albumCopia);
-        this.albunsPorTitulo.computeIfAbsent(albumCopia.getNome().toLowerCase(), t-> new ArrayList<>()).add(albumCopia);
+        adicionaGrupoDeMusicas(albunsPorTitulo, album.clone());
     }
 
     public void adicionarPlaylist (Playlist playlist) {
-        Playlist playlistCopia = playlist.clone();
-        this.playlistsPorID.put(playlistProximoID++, playlistCopia);
-        this.playlistsPorTitulo.computeIfAbsent(playlistCopia.getNome().toLowerCase(), t-> new ArrayList<>()).add(playlistCopia);
+        adicionaGrupoDeMusicas(playlistsPorTitulo, playlist.clone());
     }
 
     public Utilizador getUtilizador (String nome) throws UtilizadorException {
@@ -80,10 +58,8 @@ public class SpotModel implements Serializable {
         return this.utilizadores.containsKey(nome.toLowerCase());
     }
 
-    public Album getAlbum (int id) {return this.albunsPorID.get(id);}
-
     public List <Album> getAlbum (String nome) throws AlbumException {
-        List <Album> album = this.albunsPorTitulo.get(nome.toLowerCase());
+        List <Album> album = getGrupos(albunsPorTitulo, nome);
         if (album.isEmpty()) throw new AlbumException("Não existe nenhum álbum com esse nome");
         return album;
     }
@@ -99,7 +75,7 @@ public class SpotModel implements Serializable {
     }
 
     public List<Musica> getMusicasPeloNome(String nome) throws MusicaException {
-        List<Musica> musicas = this.albunsPorID.values().stream()
+        List<Musica> musicas = getGrupo(this.albunsPorTitulo).stream()
                 .flatMap(album -> album.getMusicasPeloNome(nome).stream())
                 .toList();
 
