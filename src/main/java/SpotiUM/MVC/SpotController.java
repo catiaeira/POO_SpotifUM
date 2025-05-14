@@ -55,7 +55,7 @@ public class SpotController {
         menu.setHandler(3, () -> playlistMenu(utilizador));
         menu.setHandler(4, () -> bibliotecaMenu(utilizador));
         menu.setHandler(5, () -> userCriaPlaylist(utilizador));
-        // menu.setHandler(6, () -> );
+        menu.setHandler(6, () -> userVerHistorico(utilizador));
         menu.setHandler(7, () -> userVerPontos(utilizador));
 
         menu.run();
@@ -287,6 +287,10 @@ public class SpotController {
             novaPlaylist (user);
         }
         else this.view.printMensagem(SpotView.Mensagem.ADICIONAR_PLAYLIST, false);
+    }
+
+    public void userVerHistorico(Utilizador user) {
+        this.view.printHistorico(user);
     }
 
     public Playlist obterPlaylistValidaDoUserInput () {
