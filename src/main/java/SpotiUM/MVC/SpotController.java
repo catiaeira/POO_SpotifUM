@@ -2,8 +2,10 @@ package SpotiUM.MVC;
 
 import SpotiUM.*;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 /*
 Esta classe vai ser a responsável por chamar os métodos dos componentes do programa
@@ -106,7 +108,13 @@ public class SpotController {
                 "Adicionar à biblioteca"
         }, album.getNome());
 
-        menu.setHandler(1, () -> utilizadorOuveAlbum(utilizador, album));
+        menu.setHandler(1, () -> {
+            if(utilizador.getPlanoSubscricao() instanceof PlanoFree){
+                utilizadorOuveAlbum(utilizador, album, 1);
+            } else {
+                utilizadorEscolheModoAlbum(utilizador, album);
+            }
+        });
         menu.setHandler(2, () -> adicionaAlbumBiblioteca(utilizador, album));
 
         menu.run();
@@ -124,7 +132,13 @@ public class SpotController {
                 "Adicionar à biblioteca"
         }, playlist.getNome());
 
-        menu.setHandler(1, () -> utilizadorOuvePlaylist(utilizador, playlist));
+        menu.setHandler(1, () -> {
+            if(utilizador.getPlanoSubscricao() instanceof PlanoFree){
+                utilizadorOuvePlaylist(utilizador, playlist, 1);
+            } else {
+                utilizadorEscolheModoPlaylist(utilizador, playlist);
+            }
+        });
         menu.setHandler(2, () -> adicionaPlaylistBiblioteca(utilizador, playlist));
 
         menu.run();
@@ -144,12 +158,20 @@ public class SpotController {
         menu.setHandler(2, () -> {
             List <Album> albuns = biblioteca.getAlbuns();
             Album album = obterAlbumValidoDoUserInput (albuns);
-            utilizadorOuveAlbum(utilizador, album);
+            if(utilizador.getPlanoSubscricao() instanceof PlanoFree){
+                utilizadorOuveAlbum(utilizador, album, 1);
+            } else {
+                utilizadorEscolheModoAlbum(utilizador, album);
+            }
         });
         menu.setHandler(3, () -> {
             List<Playlist> playlists = biblioteca.getPlaylists();
             Playlist playlist = obterPlaylistValidoDoUserInput(playlists);
-            utilizadorOuvePlaylist(utilizador, playlist);
+            if(utilizador.getPlanoSubscricao() instanceof PlanoFree){
+                utilizadorOuvePlaylist(utilizador, playlist, 1);
+            } else {
+                utilizadorEscolheModoPlaylist(utilizador, playlist);
+            }
         });
         menu.setHandler(4, () -> {
             List <Album> albuns = biblioteca.getAlbuns();
@@ -248,39 +270,60 @@ public class SpotController {
         this.view.printMensagem(SpotView.Mensagem.ADICIONAR_PLAYLIST, true);
     }
 
-    public void utilizadorOuveAlbum (Utilizador user, Album album) {
+    public void utilizadorEscolheModoAlbum (Utilizador user, Album album) {
+        NewMenu menu = new NewMenu(new String[] {
+                "Sim",
+                "Não"
+        }, "Ouvir em modo aleatório?");
+        menu.setHandler(1, () -> utilizadorOuveAlbum(user, album,1));
+        menu.setHandler(2, () -> utilizadorOuveAlbum(user, album,0));
+        menu.runOnce();
+    }
+
+    public void utilizadorEscolheModoPlaylist (Utilizador user, Playlist playlist) {
+        NewMenu menu = new NewMenu(new String[] {
+                "Sim",
+                "Não"
+        }, "Ouvir em modo aleatório?");
+        menu.setHandler(1, () -> utilizadorOuvePlaylist(user, playlist,1));
+        menu.setHandler(2, () -> utilizadorOuvePlaylist(user, playlist,0));
+        menu.runOnce();
+    }
+
+    public void utilizadorOuveAlbum (Utilizador user, Album album, int modo) {
         ArrayList <Musica> musicas = album.getMusicas();
-        ListaReproducao lista = new ListaReproducao(musicas, user);
+        ListaReproducao lista = new ListaReproducao(musicas, modo);
         utilizadorOuveMusica(user, lista.getLista());
     }
 
-    public void utilizadorOuveAlbum (Utilizador user) {
-        Album album = obterAlbumValidoDoUserInput();
-        ArrayList <Musica> musicas = album.getMusicas();
-        ListaReproducao lista = new ListaReproducao(musicas, user);
-        utilizadorOuveMusica(user, lista.getLista());
-    }
+//    public void utilizadorOuveAlbum (Utilizador user, int modo) {
+//        Album album = obterAlbumValidoDoUserInput();
+//        ArrayList <Musica> musicas = album.getMusicas();
+//        ListaReproducao lista = new ListaReproducao(musicas, modo);
+//        utilizadorOuveMusica(user, lista.getLista());
+//    }
 
-    public void utilizadorOuvePlaylist (Utilizador user, Playlist playlist) {
+    public void utilizadorOuvePlaylist (Utilizador user, Playlist playlist, int modo) {
         ArrayList <Musica> musicas = playlist.getMusicas();
-        ListaReproducao lista = new ListaReproducao(musicas, user);
+        ListaReproducao lista = new ListaReproducao(musicas, modo);
         utilizadorOuveMusica(user, lista.getLista());
     }
 
-    public void utilizadorOuvePlaylist (Utilizador user) {
-        Playlist playlist = obterPlaylistValidaDoUserInput(user);
-        if (playlist == null){
-            this.view.printMensagem("Playlist não existe");
-            return;
-        }
-        ArrayList <Musica> musicas = playlist.getMusicas();
-        ListaReproducao lista = new ListaReproducao(musicas, user);
-        utilizadorOuveMusica(user, lista.getLista());
-    }
+//    public void utilizadorOuvePlaylist (Utilizador user, int modo) {
+//        Playlist playlist = obterPlaylistValidaDoUserInput(user);
+//        if (playlist == null){
+//            this.view.printMensagem("Playlist não existe");
+//            return;
+//        }
+//        ArrayList <Musica> musicas = playlist.getMusicas();
+//        ListaReproducao lista = new ListaReproducao(musicas, modo);
+//        utilizadorOuveMusica(user, lista.getLista());
+//    }
 
     public void utilizadorOuveMusica(Utilizador user, ArrayList<Musica> musicas) {
         PlaybackController playback = new PlaybackController(view, musicas, user);
-        playback.play(); // Start first song
+        view.printMensagem("F para avançar, R para voltar, S para parar a reprodução.");
+        playback.play(); // Inicia a reprodução
 
         boolean running = true;
         while (running) {
@@ -298,7 +341,7 @@ public class SpotController {
                     break;
                 case "R": // REWIND (BACK)
                     if (user.getPlanoSubscricao() instanceof PlanoFree) {
-                        view.printMensagem("Ação inválida!");
+                        view.printMensagem("Ação inválida em plano gratuito!");
                     } else {
                         playback.back();
                     }

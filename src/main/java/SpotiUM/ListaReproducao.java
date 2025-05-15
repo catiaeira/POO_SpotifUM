@@ -7,10 +7,10 @@ import java.util.Iterator;
 public class ListaReproducao {
     private ArrayList<Musica> listaReproducao;
 
-    public ListaReproducao(ArrayList<Musica> musicas, Utilizador user) {
+    public ListaReproducao(ArrayList<Musica> musicas, int modo) {
         this.listaReproducao = new ArrayList<>(musicas);
 
-        if (user.getPlanoSubscricao() instanceof PlanoFree) {
+        if (modo == 1) {
             Collections.shuffle(listaReproducao);
         }
     }

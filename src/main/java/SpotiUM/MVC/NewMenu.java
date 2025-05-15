@@ -80,6 +80,18 @@ public class NewMenu {
         } while (op != 0);
     }
 
+    public void runOnce() {
+        show();
+        int op = readOption();
+        // testar pré-condição
+        if (op > 0 && !this.disponivel.get(op - 1).validate()) {
+            System.out.println("Opção indisponível! Tente novamente.");
+        } else if (op > 0) {
+            // executar handler
+            this.handlers.get(op - 1).execute();
+        }
+    }
+
     /**
      * Método que regista uma pré-condição numa opção do NewMenu.
      *
