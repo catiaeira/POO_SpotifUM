@@ -40,16 +40,18 @@ public class SpotController {
             this.view.mostraMensagemErro(e);
             return;
         }
-        NewMenu menu = new NewMenu(new String[]{
-                "Pesquisar música",
-                "Pesquisar álbum",
-                "Pesquisar playlist",
-                "Ver biblioteca",
-                "Criar playlist",
-                "Ver histórico",
-                "Ver pontos",
-                "Ver conta"
-        }, "Utilizador " + user);
+        String[] opcoes = new String[] {
+            "Pesquisar música",
+            "Pesquisar álbum",
+            "Pesquisar playlist",
+            "Ver biblioteca",
+            "Criar playlist",
+            "Ver histórico",
+            "Ver pontos",
+            "Ver conta",
+            "Apagar conta"
+        };
+        NewMenu menu = new NewMenu(opcoes, "Utilizador " + user);
 
         menu.setHandler(1, () -> musicaMenu(utilizador));
         menu.setHandler(2, () -> albumMenu(utilizador));
@@ -59,8 +61,12 @@ public class SpotController {
         menu.setHandler(6, () -> userVerHistorico(utilizador));
         menu.setHandler(7, () -> userVerPontos(utilizador));
         menu.setHandler(8, () -> this.view.printMensagem(utilizador.toString()));
+        menu.setHandler(9, () -> userApagarConta(utilizador));
 
-        menu.setPreCondition(5, () -> utilizador.getPlanoSubscricao().podeCriarPlaylist());
+        for (int i = 0; i< opcoes.length; i++) {
+            menu.setPreCondition(i+1, () -> this.modelo.utilizadorExiste(user));
+        }
+        menu.setPreCondition(5, () -> this.modelo.utilizadorExiste(user) && utilizador.getPlanoSubscricao().podeCriarPlaylist());
         menu.run();
     }
 
@@ -312,6 +318,10 @@ public class SpotController {
     public void userVerPontos (Utilizador user) {
         int pontos = user.getPontos();
         this.view.printPontos (user.getNome(), pontos);
+    }
+    public void userApagarConta (Utilizador user) {
+        this.modelo.removerUtilizador(user);
+        this.view.printMensagem("Utilizador " + user.getNome() + " apagado.");
     }
 
     public void userCriaPlaylist (Utilizador user) {

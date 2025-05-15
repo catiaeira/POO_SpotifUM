@@ -53,6 +53,18 @@ public class SpotModel implements Serializable {
         if (user == null) throw new UtilizadorException("Utilizador " + nome + " não existe");
         return user;
     }
+    public void removerUtilizador (Utilizador user) {
+        removerPlaylist(user);
+        this.utilizadores.remove(user.getNome());
+    }
+
+    public void removerPlaylist(Utilizador user) {
+        for (List<Playlist> list : playlistsPorTitulo.values()) {
+            list.removeIf(p -> p.getCriador().equals(user));
+        }
+
+        playlistsPorTitulo.entrySet().removeIf(entry -> entry.getValue().isEmpty());
+    }
 
     public boolean utilizadorExiste(String nome) {
         return this.utilizadores.containsKey(nome.toLowerCase());
