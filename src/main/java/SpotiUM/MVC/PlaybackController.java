@@ -22,7 +22,7 @@ public class PlaybackController {
 
     public synchronized void play() {
         if (cur >= musicas.size()) {
-            view.printMensagem("Fim da lista de reprodução.");
+            view.printMensagem("Fim da lista de reprodução.\nPrima S para voltar.");
             return;
         }
 
@@ -84,9 +84,7 @@ public class PlaybackController {
     }
 
     public void imprimirLetra(Musica m){
-        String letra = m.getLetra();
-
-        letra = letra.replace("\\n", "\n");
+        String letra = m.getLetra().replace("\\n", "\n");
         String[] linhas = letra.split("\n");
 
         //idealmente:
