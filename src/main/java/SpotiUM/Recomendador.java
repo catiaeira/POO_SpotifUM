@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Recomendador {
-    private Map<String, Integer> generosMaisOuvidos;
-    private Map<String, Integer> artistasMaisOuvidos;
+    private final Map<String, Integer> generosMaisOuvidos;
+    private final Map<String, Integer> artistasMaisOuvidos;
     private List<Musica> musicasOrdenadas;
     private int ultimaMusicaIndex;
 

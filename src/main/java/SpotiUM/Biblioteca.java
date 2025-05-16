@@ -7,7 +7,7 @@ import java.util.List;
 
 import static SpotiUM.MapComNomeUtils.*;
 
-public class Biblioteca implements Serializable {
+public class Biblioteca {
     private final HashMap<String, List<Album>> albuns;
     private final HashMap<String,  List<Playlist>> playlists;
 
