@@ -2,6 +2,7 @@ package SpotiUM;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +13,10 @@ public class Utilizador implements Serializable {
     private PlanoSubscricao planoSubscricao;
     private Biblioteca biblioteca;
     private int pontos;
-    private List<Reproducao> historico;
+    private final List<Reproducao> historico;
+    private Recomendador recomendador;
 
+    public static final Utilizador SISTEMA = new Utilizador("SpotiUM","", "", null, 0);
 
     public Utilizador(){
         this.nome = "";
@@ -57,14 +60,14 @@ public class Utilizador implements Serializable {
     }
 
     public void registarReproducao(Musica musica) {
-        this.historico.add(new Reproducao(musica, LocalDate.now()));
+        this.historico.add(new Reproducao(musica, LocalDateTime.now()));
     }
 
     public List<Reproducao> getHistorico() {
         return new ArrayList<>(historico);
     }
 
-    public List<Reproducao> getHistoricoEntre(LocalDate inicio, LocalDate fim) {
+    public List<Reproducao> getHistoricoEntre(LocalDateTime inicio, LocalDateTime fim) {
         return historico.stream()
                 .filter(r -> !r.getData().isBefore(inicio) && !r.getData().isAfter(fim))
                 .toList();
@@ -90,6 +93,7 @@ public class Utilizador implements Serializable {
     public int getPontos(){
         return pontos;
     }
+    public Recomendador getRecomendador() {return recomendador;}
 
     public void setNome(String nome){
         this.nome = nome;
@@ -109,6 +113,7 @@ public class Utilizador implements Serializable {
     public void setPontos(int pontos){
         this.pontos = pontos;
     }
+    public void setRecomendador (Recomendador r) {this.recomendador = r;}
 
     @Override
     public String toString() {

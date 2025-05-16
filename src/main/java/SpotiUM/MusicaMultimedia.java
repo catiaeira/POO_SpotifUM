@@ -9,7 +9,7 @@ public class MusicaMultimedia extends Musica implements IMusicaMultimedia {
     }
 
     public MusicaMultimedia(String nome, String interprete, String editora, String letra, String genero, String musica, int duracaoSegs, int nReproducoes, String link) {
-        super(nome, interprete, editora, letra, musica, genero, duracaoSegs, nReproducoes);
+        super(nome, interprete, editora, letra, genero, musica, duracaoSegs, nReproducoes);
         this.videoLink = link;
     }
 
