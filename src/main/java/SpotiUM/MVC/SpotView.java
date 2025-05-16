@@ -2,6 +2,7 @@ package SpotiUM.MVC;
 
 import SpotiUM.Utilizador;
 import SpotiUM.Reproducao;
+import SpotiUM.Musica;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,38 @@ public class SpotView {
 
     public void printPontos (String user, int pontos) {
         System.out.println(user + " tem " + String.valueOf(pontos) + " pontos");
+    }
+
+    public void printMusicaMaisReproduzida(Musica musica) {
+        System.out.println("Música mais reproduzida:\n" + musica.toString());
+    }
+
+    public void printSemDadosEstatistica() {
+        System.out.println("Não existem dados de reprodução.");
+    }
+
+    public void printInterpreteMaisEscutado(String artista, int totalReproducoes) {
+        System.out.println("Intérprete mais escutado: " + artista + " com " + totalReproducoes + " reproduções.");
+    }
+
+    public void printUtilizadorMaisMusicasOuvidas(String nome, int total) {
+        System.out.println("Utilizador que ouviu mais músicas: " + nome + " com " + total + " músicas ouvidas");
+    }
+
+    public void printUtilizadorComMaisPontos(String nome, int pontos) {
+        System.out.println("Utilizador com mais pontos: " + nome + " com " + pontos + " pontos.");
+    }
+
+    public void printGeneroMaisReproduzido(String genero, int totalReproducoes) {
+        System.out.println("Género musical mais reproduzido: " + genero + " com " + totalReproducoes + " reproduções.");
+    }
+
+    public void printNumeroPlaylistsPublicas(int total) {
+            System.out.println("Número de playlists públicas: " + total);
+    }
+
+    public void printUtilizadorComMaisPlaylists(String nome, int total) {
+        System.out.println("Utilizador com mais playlists: " + nome + " com " + total + " playlists.");
     }
 
     public void printHistorico(Utilizador u) {

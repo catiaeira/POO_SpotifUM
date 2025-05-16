@@ -13,16 +13,20 @@ public class SpotModel implements Serializable {
     private Map<String, Utilizador> utilizadores; // key string é sempre em lowercase
     private Map<String, List<Album>> albunsPorTitulo;
     private Map<String, List<Playlist>> playlistsPorTitulo;
+    private Map<String, Musica> musicasPorNome;
+
 
     public SpotModel() {
         this.utilizadores = new HashMap<>();
         this.albunsPorTitulo = new HashMap<>();
         this.playlistsPorTitulo = new HashMap<>();
+        this.musicasPorNome = new HashMap<>();
     }
 
     public Map <String, Utilizador> getUtilizadores()           { return new HashMap<> (this.utilizadores);}
     public Map <String, List<Album>> getAlbunsPorTitulo()       { return new HashMap<>(this.albunsPorTitulo);}
     public Map <String, List<Playlist>> getPlaylistsPorTitulo() { return new HashMap<>(this.playlistsPorTitulo);}
+    public Map<String, Musica> getMusicasPorNome()              {return new HashMap<>(this.musicasPorNome);}
 
     public void setAlbunsPorTitulo(Map<String, List<Album>> albunsPorTitulo) {
         deepCopy(this.albunsPorTitulo, albunsPorTitulo);
@@ -42,6 +46,9 @@ public class SpotModel implements Serializable {
     }
     public void adicionaAlbum(Album album) {
         adicionaGrupoDeMusicas(albunsPorTitulo, album.clone());
+        for (Musica m : album.clone().getMusicasList()) {
+            musicasPorNome.putIfAbsent(m.getNome().toLowerCase(), m.clone());
+        }
     }
 
     public void adicionarPlaylist (Playlist playlist) {
@@ -72,6 +79,7 @@ public class SpotModel implements Serializable {
 
     public void adicionaMusica (Musica musica, Album album) {
         album.adicionarMusica(musica.clone());
+        this.musicasPorNome.putIfAbsent(musica.clone().getNome().toLowerCase(), musica.clone());
     }
 
     public List<Musica> getMusicasPeloNome(String nome) throws MusicaException {
