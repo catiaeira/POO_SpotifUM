@@ -77,13 +77,15 @@ public class SpotController {
                 "Adicionar música a álbum existente",
                 "Novo album",
                 "Importar dados",
-                "Exportar dados"
+                "Exportar dados",
+                "Consultar Estatísticas"
         }, "Admin");
 
         menu.setHandler(1, this::adicionaMusicaComInputUsuario);
         menu.setHandler(2, this::adicionaAlbum);
         menu.setHandler(3, this::carregarEstado);
         menu.setHandler(4, this::guardarEstado);
+        menu.setHandler(5, this::menuEstatisticas);
         menu.run();
     }
 
@@ -483,6 +485,97 @@ public class SpotController {
     private void exportar (String tipo, String ficheiro) {
         boolean sucesso = guardarEstado(tipo, ficheiro);
         this.view.printMensagem(SpotView.Mensagem.GUARDAR, sucesso);
+    }
+
+
+    public void menuEstatisticas() {
+        NewMenu menu = new NewMenu(new String[]{
+                "Música mais reproduzida",
+                "Intérprete mais escutado",
+                "Utilizador que mais músicas ouviu",
+                "Utilizador com mais pontos",
+                "Género musical mais reproduzido",
+                "Número de playlists públicas",
+                "Utilizador com mais playlists"
+        }, "Estatísticas");
+
+        menu.setHandler(1, this::queryMusicaMaisReproduzida);
+        menu.setHandler(2, this::queryInterpreteMaisEscutado);
+        menu.setHandler(3, this::queryUtilizadorMaisMusicasOuvidas);
+        menu.setHandler(4, this::queryUtilizadorComMaisPontos);
+        menu.setHandler(5, this::queryGeneroMaisReproduzido);
+        menu.setHandler(6, this::queryNumeroPlaylistsPublicas);
+        menu.setHandler(7, this::queryUtilizadorComMaisPlaylists);
+
+        menu.run();
+    }
+
+    public void queryMusicaMaisReproduzida() {
+        Musica maisOuvida = Estatisticas.getMusicaMaisReproduzida(modelo);
+        if (maisOuvida == null) {
+            view.printSemDadosEstatistica();
+        } else {
+            view.printMusicaMaisReproduzida(maisOuvida);
+        }
+    }
+
+    public void queryInterpreteMaisEscutado() {
+        String artista = Estatisticas.getInterpreteMaisEscutado(modelo);
+        if (artista == null) {
+            view.printSemDadosEstatistica();
+        } else {
+            int totalReproducoes = (int) modelo.getUtilizadores().values().stream()
+                    .flatMap(u -> u.getHistorico().stream())
+                    .filter(r -> r.getMusica().getInterprete().equals(artista))
+                    .count();
+            view.printInterpreteMaisEscutado(artista, totalReproducoes);
+        }
+    }
+
+    public void queryUtilizadorMaisMusicasOuvidas() {
+        Map.Entry<String, Integer> resultado = Estatisticas.getUtilizadorMaisMusicasOuvidas(modelo);
+        if (resultado == null) {
+            view.printSemDadosEstatistica();
+        } else {
+            view.printUtilizadorMaisMusicasOuvidas(resultado.getKey(), resultado.getValue());
+        }
+    }
+
+    public void queryUtilizadorComMaisPontos() {
+        Map.Entry<String, Integer> entry = Estatisticas.getUtilizadorComMaisPontos(modelo);
+        if (entry == null) {
+            view.printSemDadosEstatistica();
+        } else {
+            view.printUtilizadorComMaisPontos(entry.getKey(), entry.getValue());
+        }
+    }
+
+    public void queryGeneroMaisReproduzido() {
+        Map.Entry<String, Integer> generoMaisReproduzido = Estatisticas.getGeneroMaisReproduzido(modelo);
+        if (generoMaisReproduzido == null) {
+            view.printSemDadosEstatistica();
+        } else {
+            String genero = generoMaisReproduzido.getKey();
+            int total = generoMaisReproduzido.getValue();
+            view.printGeneroMaisReproduzido(genero, total);
+        }
+    }
+
+    public void queryNumeroPlaylistsPublicas() {
+        int total = Estatisticas.getNumeroPlaylistsPublicas(modelo);
+        if (total == 0) {
+            view.printSemDadosEstatistica();
+        } else {
+            view.printNumeroPlaylistsPublicas(total);
+        }
+    }
+
+    public void queryUtilizadorComMaisPlaylists() {
+        Map.Entry<String, Integer> nPlaylists = Estatisticas.getUtilizadorComMaisPlaylists(modelo);
+        if (nPlaylists == null)
+            view.printSemDadosEstatistica();
+        else
+            view.printUtilizadorComMaisPlaylists(nPlaylists.getKey(), nPlaylists.getValue());
     }
 
     /***
