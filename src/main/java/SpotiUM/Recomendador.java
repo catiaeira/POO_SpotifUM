@@ -46,7 +46,7 @@ public class Recomendador {
             }
         }
         user.setRecomendador(r);
-        String playlistNome = "Recomendada";
+        String playlistNome = "Lista de Favoritos";
         if (isExplicita) playlistNome = playlistNome.concat(" explícita");
         if (duracaoMaxima != -1) playlistNome = playlistNome.concat(" com " + duracaoMaxima + " minutos");
         return new Playlist(playlistNome, Utilizador.SISTEMA, topMusicas, false);

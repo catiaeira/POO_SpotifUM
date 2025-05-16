@@ -103,4 +103,10 @@ public class SpotModel implements Serializable {
         return musicas;
     }
 
+    public List<Musica> getTodasAsMusicas(){
+        return getGrupo(this.albunsPorTitulo).stream()
+                .flatMap(a -> a.getMusicas().stream())
+                .map(Musica::clone)
+                .toList();
+    }
 }

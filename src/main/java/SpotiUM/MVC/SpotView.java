@@ -79,7 +79,7 @@ public class SpotView {
     }
 
     public void printNumeroPlaylistsPublicas(int total) {
-            System.out.println("Número de playlists públicas: " + total);
+        System.out.println("Número de playlists públicas: " + total);
     }
 
     public void printUtilizadorComMaisPlaylists(String nome, int total) {
@@ -123,10 +123,18 @@ public class SpotView {
         reply.add(input.lerString("Nome da editora: "));
         reply.add(input.lerString("Letra: "));
         reply.add(input.lerString("Género: "));
-        reply.add(input.lerString("Musica: "));
+        reply.add(input.lerString("Ficheiro de música: "));
         int duracao = input.lerInt("Duração (segundos): ", "Deve ser maior que 0", i -> i>0);
+        boolean explicita = input.lerInt("É explícita?\n1. Sim\n2. Não ", "Insere 1 ou 2", i -> i == 1 || i == 2) == 1;
+        boolean multimedia = input.lerInt("É multimédia?\n1. Sim\n2. Não ", "Insere 1 ou 2", i -> i == 1 || i == 2) == 1;
 
         reply.add (Integer.toString(duracao));
+        reply.add(explicita ? "true" : "false");
+        reply.add(multimedia ? "true" : "false");
+
+        if (multimedia) reply.add(input.lerString("Link multimédia: "));
+        else reply.add("");
+
         return reply;
     }
 
