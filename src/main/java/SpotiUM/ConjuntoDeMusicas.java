@@ -17,7 +17,7 @@ public interface ConjuntoDeMusicas {
         return new ArrayList<>(getMusicasList());
     }
 
-    default void setMusicas(ArrayList<Musica> musicas) {
+    default void setMusicas(List<Musica> musicas) {
         ArrayList <Musica> list = new ArrayList<>();
         musicas.forEach(m -> list.add(m.clone()));
         setMusicasList(list);
@@ -39,7 +39,7 @@ public interface ConjuntoDeMusicas {
         }
         return sb.toString();
     }
-    
+
     default void adicionarMusica(Musica musica) {getMusicasList().add(musica);}
     default void removerMusica (Musica musica) {getMusicasList().remove(musica);}
 

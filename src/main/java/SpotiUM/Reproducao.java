@@ -1,14 +1,14 @@
 package SpotiUM;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Reproducao implements Serializable {
 
     private Musica musica;
-    private LocalDate data;
+    private LocalDateTime data;
 
-    public Reproducao(Musica musica, LocalDate data) {
+    public Reproducao(Musica musica, LocalDateTime data) {
         this.musica = musica;
         this.data = data;
     }
@@ -17,7 +17,7 @@ public class Reproducao implements Serializable {
         return musica;
     }
 
-    public LocalDate getData() {
+    public LocalDateTime getData() {
         return data;
     }
 

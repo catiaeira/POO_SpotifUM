@@ -2,10 +2,11 @@ package SpotiUM;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Playlist implements Serializable, ConjuntoDeMusicas {
     private String nome;
-    private Utilizador criador; //null se for playlist aleatória, criada por SpotiUM, senão o utilizador em si
+    private Utilizador criador; //Utilizador.SISTEMA se for playlist aleatória, criada por SpotiUM, senão o utilizador em si
     private ArrayList<Musica> musicas;
     private int duracao;
     private boolean isPublica;
@@ -18,7 +19,7 @@ public class Playlist implements Serializable, ConjuntoDeMusicas {
         this.isPublica = false;
     }
 
-    public Playlist(String nome, Utilizador criador, ArrayList<Musica> musicas, boolean isPublica) {
+    public Playlist(String nome, Utilizador criador, List<Musica> musicas, boolean isPublica) {
         setNome(nome);
         this.criador = criador;
         setMusicas(musicas);

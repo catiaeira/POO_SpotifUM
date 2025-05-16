@@ -7,7 +7,7 @@ public class MusicaExplicita extends Musica implements IMusicaExplicita {
     }
 
     public MusicaExplicita(String nome, String interprete, String editora, String letra, String genero, String musica, int duracaoSegs, int nReproducoes) {
-        super(nome, interprete, editora, letra, musica, genero, duracaoSegs, nReproducoes);
+        super(nome, interprete, editora, letra, genero, musica, duracaoSegs, nReproducoes);
     }
 
     public MusicaExplicita(MusicaExplicita m){
@@ -21,7 +21,7 @@ public class MusicaExplicita extends Musica implements IMusicaExplicita {
 
     @Override
     public String toString() {
-        return super.toString() + "\n⚠️ Tipo: Música Explícita";
+        return super.toString() + "\nTipo: Música Explícita";
     }
 
     @Override
