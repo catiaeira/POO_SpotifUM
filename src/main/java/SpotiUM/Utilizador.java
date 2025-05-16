@@ -11,10 +11,10 @@ public class Utilizador implements Serializable {
     private String email;
     private String morada;
     private PlanoSubscricao planoSubscricao;
-    private Biblioteca biblioteca;
+    private transient Biblioteca biblioteca;
     private int pontos;
-    private final List<Reproducao> historico;
-    private Recomendador recomendador;
+    private final transient List<Reproducao> historico;
+    private transient Recomendador recomendador;
 
     public static final Utilizador SISTEMA = new Utilizador("SpotiUM","", "", null, 0);
 
@@ -49,7 +49,7 @@ public class Utilizador implements Serializable {
         this.planoSubscricao = u.getPlanoSubscricao();
         this.biblioteca = u.getBiblioteca();
         this.pontos = u.getPontos();
-        this.historico = new ArrayList<>(u.getHistorico());
+        this.historico = u.getHistorico();
     }
 
     public void ouvirMusica(Musica musica){
@@ -64,6 +64,7 @@ public class Utilizador implements Serializable {
     }
 
     public List<Reproducao> getHistorico() {
+        if (historico == null) return new ArrayList<>();
         return new ArrayList<>(historico);
     }
 
@@ -72,7 +73,6 @@ public class Utilizador implements Serializable {
                 .filter(r -> !r.getData().isBefore(inicio) && !r.getData().isAfter(fim))
                 .toList();
     }
-
 
 
     public String getNome(){
@@ -88,6 +88,7 @@ public class Utilizador implements Serializable {
         return planoSubscricao;
     }
     public Biblioteca getBiblioteca() {
+        if (biblioteca == null) return new Biblioteca();
         return biblioteca;
     }
     public int getPontos(){

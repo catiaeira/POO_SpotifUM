@@ -36,7 +36,13 @@ public class SpotModel implements Serializable {
     }
 
     public void setUtilizadores(Map <String, Utilizador> utilizadores) {
-        this.utilizadores = new HashMap<>(utilizadores);
+        Map<String, Utilizador> copia = new HashMap<>();
+        for (Map.Entry<String, Utilizador> entry : utilizadores.entrySet()) {
+            Utilizador novo = new Utilizador(entry.getValue());
+            copia.put(entry.getKey(), novo);
+        }
+
+        this.utilizadores = copia;
     }
 
     public void adicionarUtilizador (Utilizador user)  {
