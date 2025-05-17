@@ -6,6 +6,10 @@ import SpotiUM.Entidades.Utilizador;
 import SpotiUM.MVC.SpotModel;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.util.Map;
+
+
 
 public class Estatisticas {
 
@@ -50,6 +54,28 @@ public class Estatisticas {
                 .max(Map.Entry.comparingByValue())
                 .orElse(null);
     }
+
+    public static Map.Entry<String, Integer> getUtilizadorMaisMusicasOuvidasIntervalo(SpotModel modelo, String dataInicio, String dataFim) {
+        Map<String, Utilizador> utilizadores = modelo.getUtilizadores();
+        if (utilizadores.isEmpty()) return null;
+
+        LocalDate inicio = LocalDate.parse(dataInicio);
+        LocalDate fim = LocalDate.parse(dataFim);
+
+        return utilizadores.entrySet().stream()
+                .map(e -> {
+                    int count = (int) e.getValue().getHistorico().stream()
+                            .filter(registo -> {
+                                LocalDate data = registo.getData().toLocalDate();
+                                return (data.isEqual(inicio) || data.isAfter(inicio)) &&
+                                        (data.isEqual(fim) || data.isBefore(fim));
+                            }).count();
+                    return Map.entry(e.getKey(), count);
+                })
+                .max(Map.Entry.comparingByValue())
+                .orElse(null);
+    }
+
 
     public static Map.Entry<String, Integer> getUtilizadorComMaisPontos(SpotModel modelo) {
         return modelo.getUtilizadores().values().stream()

@@ -557,12 +557,23 @@ public class SpotController {
 
         menu.setHandler(1, this::queryMusicaMaisReproduzida);
         menu.setHandler(2, this::queryInterpreteMaisEscutado);
-        menu.setHandler(3, this::queryUtilizadorMaisMusicasOuvidas);
+        menu.setHandler(3, this::menuUtilizadorMaisMusicasOuvidas);
         menu.setHandler(4, this::queryUtilizadorComMaisPontos);
         menu.setHandler(5, this::queryGeneroMaisReproduzido);
         menu.setHandler(6, this::queryNumeroPlaylistsPublicas);
         menu.setHandler(7, this::queryUtilizadorComMaisPlaylists);
 
+        menu.run();
+    }
+
+    public void menuUtilizadorMaisMusicasOuvidas() {
+        NewMenu menu = new NewMenu(new String[]{
+                "Sim, quero filtrar por data",
+                "Não, sem filtro"
+        }, "Filtrar por data?");
+
+        menu.setHandler(1, this::queryUtilizadorMaisMusicasOuvidasIntervalo);
+        menu.setHandler(2, this::queryUtilizadorMaisMusicasOuvidas);
         menu.run();
     }
 
@@ -591,6 +602,19 @@ public class SpotController {
     public void queryUtilizadorMaisMusicasOuvidas() {
         Map.Entry<String, Integer> resultado = Estatisticas.getUtilizadorMaisMusicasOuvidas(modelo);
         if (resultado == null) {
+            view.printSemDadosEstatistica();
+        } else {
+            view.printUtilizadorMaisMusicasOuvidas(resultado.getKey(), resultado.getValue());
+        }
+    }
+
+    public void queryUtilizadorMaisMusicasOuvidasIntervalo() {
+        String dataInicial = view.pedeData("Data inicial (AAAA-MM-DD): ");
+        String dataFinal = view.pedeData("Data final (AAAA-MM-DD): ");
+
+        Map.Entry<String, Integer> resultado = Estatisticas.getUtilizadorMaisMusicasOuvidasIntervalo(modelo, dataInicial, dataFinal);
+
+        if (resultado == null || resultado.getValue() == 0) {
             view.printSemDadosEstatistica();
         } else {
             view.printUtilizadorMaisMusicasOuvidas(resultado.getKey(), resultado.getValue());

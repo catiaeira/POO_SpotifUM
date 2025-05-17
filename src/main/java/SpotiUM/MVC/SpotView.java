@@ -52,6 +52,11 @@ public class SpotView {
         else return input.lerString("Nome da " + objeto + ": ");
     }
 
+    public String pedeData(String mensagem) {
+        UserInput input = new UserInput();
+        return input.lerString(mensagem, "Formato incorreto: insira AAAA-MM-DD", i -> i.matches("\\d{4}-\\d{2}-\\d{2}"));
+    }
+
     public void printPontos (String user, int pontos) {
         System.out.println(user + " tem " + String.valueOf(pontos) + " pontos");
     }
