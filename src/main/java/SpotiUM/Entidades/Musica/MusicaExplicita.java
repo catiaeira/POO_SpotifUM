@@ -15,11 +15,6 @@ public class MusicaExplicita extends Musica implements IMusicaExplicita {
     }
 
     @Override
-    public boolean isExplicita() {
-        return true;
-    }
-
-    @Override
     public String toString() {
         return super.toString() + "\nTipo: Música Explícita";
     }

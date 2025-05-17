@@ -26,16 +26,6 @@ public class MusicaExplicitaMultimedia extends Musica implements IMusicaMultimed
     }
 
     @Override
-    public boolean isMultimedia() {
-        return true;
-    }
-
-    @Override
-    public boolean isExplicita() {
-        return true;
-    }
-
-    @Override
     public String toString() {
         return super.toString() + "\nTipo: Multimédia Explícita";
     }

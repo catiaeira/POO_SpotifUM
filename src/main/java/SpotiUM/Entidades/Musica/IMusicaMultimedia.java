@@ -1,5 +1,9 @@
 package SpotiUM.Entidades.Musica;
 
 public interface IMusicaMultimedia {
-    public boolean isMultimedia();
+    default boolean isMultimedia() {
+        return true;
+    }
+    String getVideoLink();
+    void setVideoLink(String link);
 }

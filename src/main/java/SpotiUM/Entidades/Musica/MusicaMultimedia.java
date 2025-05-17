@@ -15,16 +15,18 @@ public class MusicaMultimedia extends Musica implements IMusicaMultimedia {
 
     public MusicaMultimedia(MusicaMultimedia m){
         super(m);
-        this.videoLink = getVideoLink();
+        this.videoLink = m.getVideoLink();
     }
 
-    public String getVideoLink(){
+    @Override
+    public String getVideoLink() {
         return videoLink;
     }
+
+    @Override
     public void setVideoLink(String link){
         this.videoLink = link;
     }
-
 
     @Override
     public boolean isMultimedia() {

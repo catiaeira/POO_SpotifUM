@@ -1,5 +1,7 @@
 package SpotiUM.Entidades.Musica;
 
 public interface IMusicaExplicita {
-    public boolean isExplicita();
+    default boolean isExplicita() {
+        return true;
+    }
 }
