@@ -88,10 +88,8 @@ public class PlaybackController {
         String letra = m.getLetra().replace("\\n", "\n");
         String[] linhas = letra.split("\n");
 
-        //idealmente:
         int durSegundos = m.getDuracao();
         int atraso = durSegundos * 1000 / linhas.length; // atraso em ms para o Thread.sleep()
-        //int atraso = 30000 / linhas.length; //cada musica demora 30 segundos
 
         for (String l : linhas) {
             try {

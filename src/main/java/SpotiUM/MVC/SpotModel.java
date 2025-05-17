@@ -109,11 +109,6 @@ public class SpotModel implements Serializable {
         return playlist;
     }
 
-    public void adicionaMusica (Musica musica, Album album) {
-        album.adicionarMusica(musica.clone());
-        this.musicasPorNome.putIfAbsent(musica.clone().getNome().toLowerCase(), musica.clone());
-    }
-
     public List<Musica> getMusicasPeloNome(String nome) throws MusicaException {
         List<Musica> musicas = getGrupo(this.albunsPorTitulo).stream()
                 .flatMap(album -> album.getMusicasPeloNome(nome).stream())
