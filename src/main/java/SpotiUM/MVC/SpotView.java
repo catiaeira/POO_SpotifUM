@@ -1,8 +1,8 @@
 package SpotiUM.MVC;
 
-import SpotiUM.Utilizador;
+import SpotiUM.Entidades.Utilizador;
 import SpotiUM.Reproducao;
-import SpotiUM.Musica;
+import SpotiUM.Entidades.Musica.Musica;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,9 @@ public class SpotView {
         GUARDAR ("Dados guardados!", "Dados não guardados"),
         ADICIONAR_MUSICA ("Música adicionada com sucesso!", "Adicionar música falhou"),
         ADICIONAR_ALBUM ("Álbum adicionado com sucesso!", "Álbum já existe"),
-        ADICIONAR_PLAYLIST ("Playlist adicionada com sucesso!", "Playlist já existe");
+        ADICIONAR_PLAYLIST ("Playlist adicionada com sucesso!", "Playlist já existe"),
+        REMOVER_ALBUM ("Álbum removido com sucesso!", "Álbum não removido"),
+        REMOVER_MUSICA ("Música removida com sucesso!", "Música não removida");
 
         private final String mensagemSucesso;
         private final String mensagemErro;

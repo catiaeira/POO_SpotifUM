@@ -1,7 +1,13 @@
-package SpotiUM;
+package SpotiUM.Entidades;
+
+import SpotiUM.Biblioteca;
+import SpotiUM.Entidades.Musica.Musica;
+import SpotiUM.Entidades.Planos.PlanoPremiumTop;
+import SpotiUM.Entidades.Planos.PlanoSubscricao;
+import SpotiUM.Recomendador;
+import SpotiUM.Reproducao;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +59,7 @@ public class Utilizador implements Serializable {
     }
 
     public void ouvirMusica(Musica musica){
-        int pontosGanhos = planoSubscricao.calcularPontos(this);
+        int pontosGanhos = planoSubscricao.calcularPontos(this, musica);
         this.pontos += pontosGanhos;
         registarReproducao(musica);
         // System.out.println(nome + " ouviu \"" + musica.getNome() + "\" e ganhou " + pontosGanhos + " pontos. Total: " + pontos);

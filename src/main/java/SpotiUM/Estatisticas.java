@@ -1,5 +1,8 @@
 package SpotiUM;
 
+import SpotiUM.Entidades.Musica.Musica;
+import SpotiUM.Entidades.Playlist;
+import SpotiUM.Entidades.Utilizador;
 import SpotiUM.MVC.SpotModel;
 import java.util.*;
 import java.util.stream.Collectors;

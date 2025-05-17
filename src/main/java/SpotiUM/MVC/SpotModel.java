@@ -1,12 +1,18 @@
 package SpotiUM.MVC;
 import SpotiUM.*;
+import SpotiUM.Entidades.*;
+import SpotiUM.Entidades.Excecoes.AlbumException;
+import SpotiUM.Entidades.Excecoes.MusicaException;
+import SpotiUM.Entidades.Excecoes.PlaylistException;
+import SpotiUM.Entidades.Excecoes.UtilizadorException;
+import SpotiUM.Entidades.Musica.Musica;
 
 import java.io.*;
 import java.util.*;
 import static SpotiUM.MapComNomeUtils.*;
 
 /*
-Esta classe vai "segurar" os dados do programa, como os users, álbuns e playlists, etc. 
+Esta classe vai "segurar" os dados do programa, como os users, álbuns e playlists, etc.
 Métodos de remover ou adicionar componentes pertencem aqui.
  */
 public class SpotModel implements Serializable {
@@ -72,11 +78,19 @@ public class SpotModel implements Serializable {
     }
 
     public void removerPlaylist(Utilizador user) {
+        List<Playlist> playlistsARemover = new ArrayList<>();
+
         for (List<Playlist> list : playlistsPorTitulo.values()) {
-            list.removeIf(p -> p.getCriador().equals(user));
+            for (Playlist p : list) {
+                if (p.getCriador().equals(user)) {
+                    playlistsARemover.add(p);
+                }
+            }
         }
 
-        playlistsPorTitulo.entrySet().removeIf(entry -> entry.getValue().isEmpty());
+        for (Playlist p : playlistsARemover) {
+            MapComNomeUtils.removeGrupoDeMusicas(playlistsPorTitulo, p);
+        }
     }
 
     public boolean utilizadorExiste(String nome) {

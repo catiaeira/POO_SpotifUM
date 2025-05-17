@@ -1,5 +1,10 @@
 package SpotiUM;
 
+import SpotiUM.Entidades.Musica.Musica;
+import SpotiUM.Entidades.Musica.MusicaExplicita;
+import SpotiUM.Entidades.Playlist;
+import SpotiUM.Entidades.Utilizador;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

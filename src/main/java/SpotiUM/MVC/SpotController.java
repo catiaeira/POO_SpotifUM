@@ -1,8 +1,20 @@
 package SpotiUM.MVC;
 
 import SpotiUM.*;
+import SpotiUM.Entidades.*;
+import SpotiUM.Entidades.Excecoes.AlbumException;
+import SpotiUM.Entidades.Excecoes.MusicaException;
+import SpotiUM.Entidades.Excecoes.PlaylistException;
+import SpotiUM.Entidades.Excecoes.UtilizadorException;
+import SpotiUM.Entidades.Musica.Musica;
+import SpotiUM.Entidades.Musica.MusicaExplicita;
+import SpotiUM.Entidades.Musica.MusicaExplicitaMultimedia;
+import SpotiUM.Entidades.Musica.MusicaMultimedia;
+import SpotiUM.Entidades.Planos.PlanoFree;
+import SpotiUM.Entidades.Planos.PlanoPremiumBase;
+import SpotiUM.Entidades.Planos.PlanoPremiumTop;
+import SpotiUM.Entidades.Planos.PlanoSubscricao;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -68,24 +80,24 @@ public class SpotController {
         for (int i = 0; i< opcoes.length; i++) {
             menu.setPreCondition(i+1, () -> this.modelo.utilizadorExiste(user));
         }
+        menu.setPreCondition(4, () -> !utilizador.getBiblioteca().estaVazia());
         menu.setPreCondition(5, () -> this.modelo.utilizadorExiste(user) && utilizador.getPlanoSubscricao().podeCriarPlaylist());
+        menu.setPreCondition(6, () -> !utilizador.getHistorico().isEmpty());
         menu.run();
     }
 
     public void menuAdmin() {
         NewMenu menu = new NewMenu(new String[]{
-                "Adicionar música a álbum existente",
                 "Novo album",
                 "Importar dados",
                 "Exportar dados",
                 "Consultar Estatísticas"
         }, "Admin");
 
-        menu.setHandler(1, this::adicionaMusicaComInputUsuario);
-        menu.setHandler(2, this::adicionaAlbum);
-        menu.setHandler(3, this::carregarEstado);
-        menu.setHandler(4, this::guardarEstado);
-        menu.setHandler(5, this::menuEstatisticas);
+        menu.setHandler(1, this::adicionaAlbum);
+        menu.setHandler(2, this::carregarEstado);
+        menu.setHandler(3, this::guardarEstado);
+        menu.setHandler(4, this::menuEstatisticas);
         menu.run();
     }
 
@@ -168,6 +180,10 @@ public class SpotController {
         menu.setHandler(2, () -> {
             List <Album> albuns = biblioteca.getAlbuns();
             Album album = obterAlbumValidoDoUserInput (albuns);
+            if (album == null) {
+                this.view.printMensagem("Álbum não existe");
+                return;
+            }
             if(utilizador.getPlanoSubscricao() instanceof PlanoFree){
                 utilizadorOuveAlbum(utilizador, album, 1);
             } else {
@@ -177,6 +193,10 @@ public class SpotController {
         menu.setHandler(3, () -> {
             List<Playlist> playlists = biblioteca.getPlaylists();
             Playlist playlist = obterPlaylistValidaDoUserInput(playlists);
+            if (playlist == null) {
+                this.view.printMensagem("Playlist não existe");
+                return;
+            }
             if(utilizador.getPlanoSubscricao() instanceof PlanoFree){
                 utilizadorOuvePlaylist(utilizador, playlist, 1);
             } else {
@@ -215,21 +235,6 @@ public class SpotController {
         this.modelo.adicionarUtilizador(utilizador);
     }
 
-    public void adicionaMusicaComInputUsuario() {
-        Album album = obterAlbumValidoDoUserInput();
-        if (album == null) return;
-        adicionaMusica(album);
-    }
-
-    public void adicionaMusica(Album album) {
-        if (album == null) {
-            this.view.printMensagem(SpotView.Mensagem.ADICIONAR_MUSICA, false);
-            return;
-        }
-        Musica musica = novaMusica();
-        this.modelo.adicionaMusica(musica, album);
-        this.view.printMensagem(SpotView.Mensagem.ADICIONAR_MUSICA, true);
-    }
 
     public Musica novaMusica() {
         List<String> dados = this.view.novaMusica();
@@ -428,7 +433,7 @@ public class SpotController {
     public Album obterAlbumValidoDoUserInput (List <Album> albuns) {
         if (albuns == null || albuns.isEmpty()) return null;
         String nomeAlbum = this.view.pedeNome("álbum", true);
-        List <Album> albunsFiltrados = albuns.stream().filter(a -> a.getNome().equals(nomeAlbum)).toList();
+        List <Album> albunsFiltrados = albuns.stream().filter(a -> a.getNome().equalsIgnoreCase(nomeAlbum)).toList();
         if (albunsFiltrados.isEmpty()) return null;
         return albunsFiltrados.size() == 1 ? albunsFiltrados.getFirst() : SpotView.escolheDeUmaLista(albunsFiltrados);
     }
@@ -436,7 +441,7 @@ public class SpotController {
     public Playlist obterPlaylistValidaDoUserInput (List <Playlist> playlists) {
         if (playlists == null || playlists.isEmpty()) return null;
         String nomePlaylist = this.view.pedeNome("playlist", false);
-        List <Playlist> playlistsFiltrados = playlists.stream().filter(a -> a.getNome().equals(nomePlaylist)).toList();
+        List <Playlist> playlistsFiltrados = playlists.stream().filter(a -> a.getNome().equalsIgnoreCase(nomePlaylist)).toList();
         if (playlistsFiltrados.isEmpty()) return null;
         return playlistsFiltrados.size() == 1 ? playlistsFiltrados.getFirst() : SpotView.escolheDeUmaLista(playlistsFiltrados);
     }

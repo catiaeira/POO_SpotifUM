@@ -1,4 +1,7 @@
-package SpotiUM;
+package SpotiUM.Entidades.Planos;
+
+import SpotiUM.Entidades.Musica.Musica;
+import SpotiUM.Entidades.Utilizador;
 
 import java.io.Serializable;
 
@@ -14,13 +17,13 @@ public abstract class PlanoSubscricao implements Serializable {
         return nome;
     }
 
-    public abstract int calcularPontos(Utilizador utilizador);
+    public abstract int calcularPontos(Utilizador utilizador, Musica musica);
 
     public abstract boolean podeCriarPlaylist();
 
     public abstract boolean temListasFavoritas();
 
     public String toString() {
-       return nome;
+        return nome;
     }
 }

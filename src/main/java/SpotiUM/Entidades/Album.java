@@ -1,4 +1,7 @@
-package SpotiUM;
+package SpotiUM.Entidades;
+
+import SpotiUM.ConjuntoDeMusicas;
+import SpotiUM.Entidades.Musica.Musica;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,5 +1,7 @@
 package SpotiUM;
 
+import SpotiUM.Entidades.Musica.Musica;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,10 @@ public interface ConjuntoDeMusicas {
         return getMusicasList().stream()
                 .filter(m-> m.getNome().equalsIgnoreCase(nome))
                 .toList();
+    }
+
+    default boolean temMusica (Musica musica) {
+        return getMusicasList().stream().anyMatch(m -> m.equals(musica));
     }
     default String printTitulos() {
         ArrayList<Musica> m = getMusicasList();
