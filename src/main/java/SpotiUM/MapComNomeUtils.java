@@ -42,10 +42,6 @@ public class MapComNomeUtils {
         map.computeIfAbsent(grupo.getNome().toLowerCase(), k -> new ArrayList<>()).add((T) grupo.copy());
     }
 
-    public static <T extends ConjuntoDeMusicas> boolean temMusica (Map<String, List<T>> map, Musica musica) {
-        return map.values().stream().anyMatch(l -> l.stream().anyMatch(c -> c.temMusica(musica)));
-    }
-
     // remove um album/playlist
     public static <T extends ConjuntoDeMusicas> void removeGrupoDeMusicas(Map<String, List<T>> map, T grupo) {
         String key = grupo.getNome().toLowerCase();
@@ -59,10 +55,6 @@ public class MapComNomeUtils {
     public static <T extends ConjuntoDeMusicas> boolean estaGuardado(Map<String, List<T>> map, T grupo) {
         List<T> gruposList = map.get(grupo.getNome().toLowerCase());
         return gruposList != null && gruposList.contains(grupo);
-    }
-
-    public static <T extends ConjuntoDeMusicas> boolean estaVazio(Map<String, List<T>> map) {
-        return map.isEmpty();
     }
 
     public static <T extends ConjuntoDeMusicas> String gruposToString(

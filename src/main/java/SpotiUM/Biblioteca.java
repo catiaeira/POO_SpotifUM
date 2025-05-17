@@ -34,13 +34,6 @@ public class Biblioteca {
         return getGrupo(this.playlists);
     }
 
-    public List<Album> getAlbuns(String name) {
-        return getGrupos(this.albuns,name);
-    }
-    public List<Playlist> getPlaylists(String name) {
-        return getGrupos(this.playlists,name);
-    }
-
     public void adicionaAlbum(Album album) {
         adicionaGrupoDeMusicas(this.albuns, album);
     }
