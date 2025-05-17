@@ -1,6 +1,7 @@
 package SpotiUM.MVC;
 
-import SpotiUM.*;
+import SpotiUM.Entidades.Musica.Musica;
+import SpotiUM.Entidades.Utilizador;
 
 import java.util.ArrayList;
 

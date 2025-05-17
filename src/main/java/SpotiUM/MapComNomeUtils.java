@@ -1,9 +1,10 @@
 package SpotiUM;
 
+import SpotiUM.Entidades.Musica.Musica;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +40,10 @@ public class MapComNomeUtils {
     @SuppressWarnings("unchecked")
     public static <T extends ConjuntoDeMusicas> void adicionaGrupoDeMusicas(Map<String, List<T>> map, T grupo) {
         map.computeIfAbsent(grupo.getNome().toLowerCase(), k -> new ArrayList<>()).add((T) grupo.copy());
+    }
+
+    public static <T extends ConjuntoDeMusicas> boolean temMusica (Map<String, List<T>> map, Musica musica) {
+        return map.values().stream().anyMatch(l -> l.stream().anyMatch(c -> c.temMusica(musica)));
     }
 
     // remove um album/playlist

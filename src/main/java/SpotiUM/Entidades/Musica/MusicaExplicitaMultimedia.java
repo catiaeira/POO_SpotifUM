@@ -1,4 +1,4 @@
-package SpotiUM;
+package SpotiUM.Entidades.Musica;
 
 public class MusicaExplicitaMultimedia extends Musica implements IMusicaMultimedia, IMusicaExplicita {
     private String videoLink;

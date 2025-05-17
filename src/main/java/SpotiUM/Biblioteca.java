@@ -1,7 +1,8 @@
 package SpotiUM;
 
-import java.io.Serializable;
-import java.util.ArrayList;
+import SpotiUM.Entidades.Album;
+import SpotiUM.Entidades.Playlist;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -70,6 +71,8 @@ public class Biblioteca {
     public String playlistToString() {
         return  gruposToString(playlists);
     }
+
+    public boolean estaVazia () {return this.albuns.isEmpty() && this.playlists.isEmpty();}
 
     @Override
     public Biblioteca clone () {

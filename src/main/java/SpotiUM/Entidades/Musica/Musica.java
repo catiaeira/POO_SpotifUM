@@ -1,4 +1,4 @@
-package SpotiUM;
+package SpotiUM.Entidades.Musica;
 
 import java.io.Serializable;
 

@@ -1,4 +1,7 @@
-package SpotiUM;
+package SpotiUM.Entidades.Planos;
+
+import SpotiUM.Entidades.Musica.Musica;
+import SpotiUM.Entidades.Utilizador;
 
 public class PlanoFree extends PlanoSubscricao {
 
@@ -7,7 +10,7 @@ public class PlanoFree extends PlanoSubscricao {
     }
 
     @Override
-    public int calcularPontos(Utilizador utilizador) {
+    public int calcularPontos(Utilizador utilizador, Musica musica) {
         return 5;  // o plano Free dá 5 pontos por musica
     }
 

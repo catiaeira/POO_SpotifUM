@@ -1,4 +1,4 @@
-package SpotiUM;
+package SpotiUM.Entidades.Musica;
 
 public class MusicaExplicita extends Musica implements IMusicaExplicita {
 

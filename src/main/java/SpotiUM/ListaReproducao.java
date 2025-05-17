@@ -1,8 +1,9 @@
 package SpotiUM;
 
+import SpotiUM.Entidades.Musica.Musica;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 
 public class ListaReproducao {
     private ArrayList<Musica> listaReproducao;

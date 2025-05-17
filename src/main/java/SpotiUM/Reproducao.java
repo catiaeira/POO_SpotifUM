@@ -1,5 +1,7 @@
 package SpotiUM;
 
+import SpotiUM.Entidades.Musica.Musica;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
