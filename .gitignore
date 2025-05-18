@@ -2,7 +2,3 @@
 build/
 .idea/
 *.class
-/utilizadores.dat
-/albuns.dat
-/playlists.dat
-/dados.dat
