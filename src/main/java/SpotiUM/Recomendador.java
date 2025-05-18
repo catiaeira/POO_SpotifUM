@@ -33,8 +33,7 @@ public class Recomendador {
             r = new Recomendador();
             r.populaDados(user, 0);
         }
-        // verifica se houve adições no historico
-        if (indexAnterior != r.ultimaMusicaIndex) r.pontuaMusicas(musicas);
+        r.pontuaMusicas(musicas);
 
         List <Musica> ordenadas = r.musicasOrdenadas;
         if (isExplicita) ordenadas = r.musicasOrdenadas.stream().filter(m -> m instanceof MusicaExplicita).toList();
@@ -77,7 +76,6 @@ public class Recomendador {
     }
 
     private void pontuaMusicas (List <Musica> musicas) {
-        this.musicasOrdenadas.clear();
         HashMap<Musica, Integer> musicasPorPontos = new HashMap<>();
         for (Musica m : musicas) {
             String genero = m.getGenero();
