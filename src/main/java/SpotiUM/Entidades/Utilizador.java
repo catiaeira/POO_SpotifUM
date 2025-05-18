@@ -74,13 +74,6 @@ public class Utilizador implements Serializable {
         return new ArrayList<>(historico);
     }
 
-    public List<Reproducao> getHistoricoEntre(LocalDateTime inicio, LocalDateTime fim) {
-        return historico.stream()
-                .filter(r -> !r.getData().isBefore(inicio) && !r.getData().isAfter(fim))
-                .toList();
-    }
-
-
     public String getNome(){
         return nome;
     }
